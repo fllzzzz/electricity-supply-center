@@ -1,28 +1,51 @@
-export default class CardService {
-	protected static sizeOBS :ResizeObserver | undefined;
+import {
+	repeatDelay
+} from '@/utils/executeControl';
 
-	public static resizeHandler(
-		el :HTMLElement
+export default class CardService {
+	protected static obs :ResizeObserver | undefined;
+	protected designWidth :number;
+
+	public static watcher(
+		el :HTMLElement,
+		fn :((
+			obsEntryList :ResizeObserverEntry[],
+			obs :ResizeObserver,
+		) => void)
 	) {
-		if(! this.sizeOBS) {
-			this.sizeOBS = new ResizeObserver((() => {}));
+		if(! this.obs) {
+			const handler = repeatDelay(fn, 20);
+
+			this.obs = new ResizeObserver(handler);
 		}
 
-		this.sizeOBS.observe(el);
+		this.obs.observe(el);
 	}
 
 	public static dispose() {
-		if(! this.sizeOBS) return;
+		if(! this.obs) return;
 		
-		this.sizeOBS.disconnect();
-		this.sizeOBS = undefined;
+		this.obs.disconnect();
+		this.obs = undefined;
 	}
 
 	public static disposeResizeHandler(
 		el :HTMLElement
 	) {
-		if(! this.sizeOBS) return;
+		if(! this.obs) return;
 
-		this.sizeOBS.unobserve(el);
+		this.obs.unobserve(el);
+	}
+
+	constructor(
+		designWidth :number
+	) {
+		this.designWidth = designWidth;
+	}
+
+	public px2em(
+		px :number
+	) {
+		return (px / this.designWidth * 100).toString() + 'em';
 	}
 };
