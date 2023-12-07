@@ -1,21 +1,22 @@
 <style lang="scss" scoped>
 	.app-footer {
 		position: fixed;
-		bottom: 0;left: 0;
+		bottom: 0;left: 50%;
+		transform: translateX(-50%);
 		z-index: 5000;
 		.wrapper {
 			position: relative;
-			width: 100vw;
+			width: 100rem;
 			height: rem(298);
 			background-repeat: no-repeat;
 			background-size: 100% 100%;
 			background-image: url('@images/按钮底框.png');
 			.box {
 				position: absolute;
-				width: vw(1792);
+				width: rem(1792);
 				height: rem(100);
 				bottom: rem(12);
-				left: vw(1024);
+				left: rem(1024);
 				display: flex;
 				flex-flow: row nowrap;
 				justify-content: space-between;
