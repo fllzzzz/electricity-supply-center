@@ -1,4 +1,8 @@
 <style lang="scss">
+	html {
+		height: 100vh;
+	}
+
 </style>
 
 <template>
@@ -18,12 +22,15 @@
 		onMounted
 	} from 'vue';
 
+	const designRatio = 0.56275;
+
 	const handler = repeatDelay<((
 		entryList : ResizeObserverEntry[]
 	) => void)>(entryList => {
 		document.documentElement.style.fontSize = 
-			(entryList[0].borderBoxSize[0].inlineSize / 100)
-				.toString() + 'px';
+			(Math.ceil(
+				entryList[0].borderBoxSize[0].blockSize / designRatio
+			) / 100).toString() + 'px';
 	}, 20);
 
 	onMounted(() => {

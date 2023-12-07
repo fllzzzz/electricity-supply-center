@@ -1,5 +1,9 @@
 @use 'sass:math';
 
 @function rem($px) {
-	@return math.div($px, 1920) * 100rem;
+	@return math.div($px, 3840) * 100rem;
+}
+
+@function vw($px) {
+	@return math.div($px, 3840) * 100vw;
 }

@@ -8,7 +8,7 @@ module.exports = defineConfig({
     resolve: {
       alias: {
         "@fonts": "@/assets/fonts",
-        "@image": "@/assets/image",
+        "@images": "@/assets/images",
         "@styles": "@/assets/styles",
         "@videos": "@/assets/videos",
       }

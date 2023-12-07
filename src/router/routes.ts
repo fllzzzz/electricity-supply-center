@@ -8,7 +8,14 @@ const routes :RouteRecordRaw[] = [
 	{
 		name: 'index',
 		path: '/',
-		component: () => import('@/views/AppIndex.vue')
+		component: () => import('@/views/AppIndex.vue'),
+		children: [
+			{
+				name: 'overview',
+				path: 'overview',
+				component: () => import('@/views/ModuleOverviewDemo.vue'),
+			}
+		]
 	}
 ];
 

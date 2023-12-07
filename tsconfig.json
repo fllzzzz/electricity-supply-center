@@ -20,7 +20,7 @@
         "src/*"
       ],
       "@fonts": ["src/assets/fonts/*"],
-      "@image": ["src/assets/image/*"],
+      "@images": ["src/assets/images/*"],
       "@styles": ["src/assets/styles/*"],
       "@videos": ["src/assets/videos/*"],
     },
