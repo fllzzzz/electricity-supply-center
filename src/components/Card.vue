@@ -14,8 +14,6 @@
 </template>
 
 <script setup lang="ts">
-	import cardService from '@/services/cardService';
-
 	import {
 		PropType,
 		CSSProperties,
@@ -40,34 +38,4 @@
 			type: Object as PropType<InboundConfig>,
 		}
 	});
-
-/* 	const vFontSize = (
-			el :HTMLElement,
-		) => {
-			cardService.watcher(el, entryList => {
-				const target = entryList.find(entry => entry.target === el);
-
-				if(! target) throw new Error(
-					'v-font-size not find target'
-				);
-
-				el.style.fontSize = 
-					(target.borderBoxSize[0].inlineSize).toString() + 'px';
-			})
-		}; */
-
-	const vFontSize = (
-		el :HTMLElement
-	) => {
-		cardService.watcher(el, entryList => {
-			console.log(entryList);
-		})
-		console.log(999);
-	}
-
-	const vRandomId = (
-		el :HTMLElement
-	) => {
-		el.id = '555';
-	}
 </script>

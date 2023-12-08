@@ -1,51 +1,48 @@
 import {
 	repeatDelay
-} from '@/utils/executeControl';
+} from '@/utils';
 
 export default class CardService {
-	protected static obs :ResizeObserver | undefined;
-	protected designWidth :number;
+	protected static observer :ResizeObserver;
+	protected static primaryKey = 0;
+	protected static idList :number[] = [];
 
-	public static watcher(
-		el :HTMLElement,
-		fn :((
-			obsEntryList :ResizeObserverEntry[],
-			obs :ResizeObserver,
-		) => void)
+	protected element :HTMLElement;
+
+	public static builder(
+		element: HTMLElement
 	) {
-		if(! this.obs) {
-			const handler = repeatDelay(fn, 20);
+		const cardId = element.getAttribute('card-id');
 
-			this.obs = new ResizeObserver(handler);
+		if(
+			cardId &&
+			this.idList
+				.includes(parseInt(cardId))
+		) return;
+
+		if(! this.observer) {
+
 		}
 
-		this.obs.observe(el);
+		return new CardService(element);
 	}
 
-	public static dispose() {
-		if(! this.obs) return;
-		
-		this.obs.disconnect();
-		this.obs = undefined;
-	}
-
-	public static disposeResizeHandler(
-		el :HTMLElement
+	protected constructor(
+		element: HTMLElement
 	) {
-		if(! this.obs) return;
+		this.element =this.elementDecorationer(element);
+	};
 
-		this.obs.unobserve(el);
-	}
-
-	constructor(
-		designWidth :number
-	) {
-		this.designWidth = designWidth;
-	}
-
-	public px2em(
-		px :number
-	) {
-		return (px / this.designWidth * 100).toString() + 'em';
-	}
+	protected elementDecorationer(
+		element: HTMLElement
+	) :HTMLElement {
+		CardService.primaryKey++;
+		CardService.idList
+			.push(CardService.primaryKey);
+		element.setAttribute(
+			'card-id',
+			(CardService.primaryKey).toString()
+		);
+		return element;
+	};
 };

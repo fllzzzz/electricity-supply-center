@@ -2,7 +2,6 @@
 	html {
 		height: 100vh;
 	}
-
 </style>
 
 <template>
@@ -16,7 +15,7 @@
 <script setup lang="ts">
 	import {
 		repeatDelay
-	} from '@/utils/executeControl';
+	} from '@/utils';
 
 	import {
 		onMounted

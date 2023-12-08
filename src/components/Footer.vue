@@ -21,7 +21,9 @@
 				flex-flow: row nowrap;
 				justify-content: space-between;
 				align-items: center;
+				pointer-events: none;
 				img {
+					pointer-events: auto;
 					width: rem(308);
 					height: 100%;
 					object-fit: fill;
@@ -34,17 +36,41 @@
 <template>
 	<div class="app-footer">
 		<div class="wrapper">
-			<div class="box">
-				<img src="@images/1总览-未选.png">
-				<img src="@images/4能源管网-未选.png">
-				<img src="@images/3耗电概览-未选.png">
-				<img src="@images/3保电工单-未选.png">
-				<img src="@images/2实时监控-未选.png">
+			<div class="box"
+				@click="moduleEntry"
+			>
+				<img src="@images/1总览-未选.png"
+					route='overview'
+				>
+				<img src="@images/4能源管网-未选.png"
+					route='electricity-grids'
+				>
+				<img src="@images/3耗电概览-未选.png"
+					route='electricity-usageStatistic'
+				>
+				<img src="@images/3保电工单-未选.png"
+					route='electricity-ticket'
+				>
+				<img src="@images/2实时监控-未选.png"
+					route='monitor'
+				>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+	import {
+		useRouter
+	} from 'vue-router';
 
+	const router = useRouter();
+
+	const moduleEntry = (event :MouseEvent) => {
+		const route = (event.target as HTMLElement).getAttribute('route');
+	
+		router.push({
+			name: route!
+		});
+	};
 </script>

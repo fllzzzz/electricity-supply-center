@@ -7,9 +7,7 @@
 
 <template>
 	<div class="container">
-		<Card
-			:designWidth="100"
-		></Card>
+		<Card></Card>
 	</div>
 </template>
 <script setup lang="ts">
