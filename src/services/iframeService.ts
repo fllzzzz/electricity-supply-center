@@ -15,8 +15,8 @@ export default class IframeService {
 		targetFn(JSON.parse(event.data));
 	};
 
-	protected src :string;
 	protected element :HTMLIFrameElement;
+	protected src :string;
 
 	public static addListener() {
 		if(this.listenerFlg === 1) return;
@@ -39,12 +39,23 @@ export default class IframeService {
 	}
 
 	constructor(
-		src :string,
 		element :HTMLIFrameElement
 	) {
-		this.src = src;
 		this.element = element;
+		this.src = this.getSrc(this.element.src);
 	};
+
+	protected getSrc(
+		src: string
+	) {
+		const result = src.match(
+			new RegExp('(?:http|https)://(?:.*[0-9])', 'g')
+		);
+
+		if(! result) throw new Error('no src found');
+
+		return result[0];
+	}
 
 	public receiver(
 		handler :((message :unknown) => void)
@@ -68,6 +79,7 @@ export default class IframeService {
 	public sender(
 		message :unknown
 	) {
+
 		if(! this.element.contentWindow)
 			throw new Error(
 				`@IframeService=>sender(): 
@@ -75,20 +87,16 @@ export default class IframeService {
 				`
 			);
 
+		const _msg = JSON.parse(
+			JSON.stringify(message)
+		);
+
 		this.element.contentWindow.postMessage(
-			message,
-			'*'
+			_msg,this.src
 		);
 	}
 
 	public removeReveicer() {
-		if(! this.element.contentWindow)
-			throw new Error(
-				`@IframeService=>removeReveicer(): 
-					this.element.contentWindow is not available!
-				`
-			);
-
 		IframeService.registerMap.delete(
 			this.src
 		);

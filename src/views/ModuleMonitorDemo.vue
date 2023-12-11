@@ -35,5 +35,8 @@
 </template>
 
 <script setup lang="ts">
-	
+	import {
+		inject,
+		Ref
+	} from 'vue';
 </script>

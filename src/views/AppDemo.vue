@@ -7,9 +7,9 @@
 
 <template>
 	<div class="container">
-		<Card></Card>
+		<HeaderOptions></HeaderOptions>
 	</div>
 </template>
 <script setup lang="ts">
-	import Card from '@/components/Card.vue';
+	import HeaderOptions from '@/components/HeaderOptions.vue';
 </script>

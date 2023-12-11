@@ -18,6 +18,7 @@
 
 	import {
 		ref,
+		Ref,
 		PropType,
 		onMounted,
 		onUnmounted,
@@ -26,7 +27,8 @@
 
 	type Config = {
 		src :string;
-		message :unknown;
+		message :Ref<unknown>;
+		handler :((message :unknown) => void)
 	};
 
 	const props = defineProps({
@@ -38,28 +40,23 @@
 	let iframeSrv :IframeService;
 	const elIframe = ref<HTMLIFrameElement | undefined>(undefined);
 
-
-	const init = (
-		element :HTMLIFrameElement
-	) => {
-		IframeService.addListener();
-
-		iframeSrv = new IframeService(
-			props.config!.src,
-			element
-		);
-
-		watchEffect(() => iframeSrv.sender(props.config?.message));
-	};
-
 	onMounted(() => {
 		if(! elIframe.value)
 			throw new Error('iframe is not load');
 
-		if(! elIframe.value.contentWindow)
-			throw new Error('contentWindow is not load');
+		elIframe.value.addEventListener('load', () => {
+			IframeService.addListener();
 
-		init(elIframe.value);
+			iframeSrv = new IframeService(elIframe.value!);
+
+			iframeSrv.receiver(message => props.config?.handler(message));
+
+			watchEffect(() => {
+				if(! props.config?.message.value) return;
+
+				iframeSrv.sender(props.config?.message.value)
+			});
+		});
 	});
 
 	onUnmounted(() => {

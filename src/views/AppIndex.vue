@@ -12,24 +12,49 @@
 	<Header></Header>
 	<Body></Body>
 	<Footer></Footer>
-	<zIframe
+	<Iframe
 		class="UEScreen"
 		:config="UEScreen"
-	></zIframe>
+	></Iframe>
 </template>
 
 <script setup lang="ts">
-	import zIframe from '@/components/Iframe.vue';
+	import {
+		UEMessage
+	} from '@/types';
+
+	import Iframe from '@/components/Iframe.vue';
 	import Body from '@/components/Body.vue';
 	import Footer from '@/components/Footer.vue';
 	import Header from '@/components/Header.vue';
 
 	import {
-		reactive
+		ref,
+		provide,
 	} from 'vue';
+
+	const iframeSendMsg = ref<unknown>();
+	const iframeReceMsg = ref<unknown>();
+
+	provide('iframeSendMsg', iframeSendMsg);
+	provide('iframeReceMsg', iframeReceMsg);
 
 	const UEScreen = {
 		src: 'http://192.168.1.114:18901',
-		message: 'saSAsa'
+		message: iframeReceMsg,
+		handler(message :unknown) {
+			const isUEMessage = (
+				message :unknown
+			) :message is UEMessage => {
+				if (
+					message &&
+					typeof message === 'object' &&
+					'ctid' in message
+				) return true;
+				return false;
+			};
+
+			iframeSendMsg.value = message;
+		}
 	};
 </script>
