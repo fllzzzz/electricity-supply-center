@@ -8,6 +8,7 @@ const routes :RouteRecordRaw[] = [
 	{
 		name: 'index',
 		path: '/',
+		redirect: 'overview',
 		component: () => import('@/views/AppIndex.vue'),
 		children: [
 			{
@@ -34,6 +35,11 @@ const routes :RouteRecordRaw[] = [
 				name: 'monitor',
 				path: 'monitor',
 				component: () => import('@/views/ModuleMonitorDemo.vue')
+			},
+			{
+				name: 'standby-video',
+				path: 'standby-video',
+				component: () => import('@/views/ModuleStandbyVideo.vue')
 			},
 		]
 	}

@@ -30,9 +30,14 @@
 
 <script setup lang="ts">
 	import {
+		model
+	} from '@/store/overview';
+
+	import {
 		reactive,
 		computed,
-		watchEffect
+		watchEffect,
+		onUnmounted
 	} from 'vue';
 
 	const props = defineProps({
@@ -69,7 +74,7 @@
 				position: [3121, 1150]
 			},
 		],
-		guangfu: [
+		photovoltaic: [
 			{
 				img: require<string>('@images/光伏发电量.png'),
 				size: [686, 730],
@@ -101,7 +106,7 @@
 				position: [3121, 1193]
 			},
 		],
-		chuneng: [
+		energyStorage: [
 			{
 				img: require<string>('@images/电池电量.png'),
 				size: [686, 428],
@@ -132,7 +137,9 @@
 				size: [686, 594],
 				position: [3121, 1350]
 			},
-		]
+		],
+		chargingPost: [],
+		agriculture: [],
 	}
 
 	const getImageList = computed(() => {
@@ -142,4 +149,8 @@
 		if(targetKey) return imageGroup[targetKey as keyof typeof imageGroup];
 		return imageGroup.default;
 	})
+
+	onUnmounted(() => {
+		model.value = undefined;
+	});
 </script>

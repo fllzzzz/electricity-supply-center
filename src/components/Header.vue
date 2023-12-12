@@ -16,7 +16,7 @@
 
 <template>
 	<div class="app-header">
-		<div class="wrapper">
+		<div class="wrapper" @click="$router.push({name: 'standby-video'})">
 
 		</div>
 	</div>

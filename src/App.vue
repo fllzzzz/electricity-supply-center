@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+	import 'element-plus/dist/index.css'
+
 	import {
 		repeatDelay
 	} from '@/utils';
