@@ -30,10 +30,6 @@
 
 <script setup lang="ts">
 	import {
-		model
-	} from '@/store/overview';
-
-	import {
 		reactive,
 		computed,
 		watchEffect,
@@ -149,8 +145,4 @@
 		if(targetKey) return imageGroup[targetKey as keyof typeof imageGroup];
 		return imageGroup.default;
 	})
-
-	onUnmounted(() => {
-		model.value = undefined;
-	});
 </script>
