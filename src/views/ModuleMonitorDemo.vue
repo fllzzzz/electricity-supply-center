@@ -37,6 +37,27 @@
 <script setup lang="ts">
 	import {
 		inject,
-		Ref
+		Ref,ref,
+		onUnmounted,
+		onMounted
 	} from 'vue';
+
+	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
+	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
+
+	const msg = {
+		ctid: 12911,
+		state: 'open'
+	};
+
+	iframeReceMsg && ((t, m) => t.value = m)(
+		iframeReceMsg, msg
+	);
+
+	onMounted(() => {
+		msg.state = 'close';
+		iframeReceMsg && ((t, m) => t.value = m)(
+			iframeReceMsg, msg
+		);
+	});
 </script>

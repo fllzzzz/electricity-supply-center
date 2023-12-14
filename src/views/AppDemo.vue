@@ -1,5 +1,4 @@
 <style lang="scss" scoped>
-
 </style>
 
 <template>
@@ -11,6 +10,8 @@
 	import HeaderOptions from '@/components/HeaderOptions.vue';
 
 	import {
-		onMounted
-	} from 'vue';
+		overview
+	} from '@/store';
+
+	overview.store.model = '光伏区域';
 </script>

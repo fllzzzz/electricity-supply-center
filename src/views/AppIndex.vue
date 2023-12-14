@@ -12,10 +12,10 @@
 	<Header></Header>
 	<Body></Body>
 	<Footer></Footer>
-<!-- 	<Iframe
+	<Iframe
 		class="UEScreen"
 		:config="UEScreen"
-	></Iframe> -->
+	></Iframe>
 </template>
 
 <script setup lang="ts">

@@ -9,6 +9,7 @@
 	}
 
 	.el-select {
+		z-index: 9999999;
 		:deep(.el-input) {
 			.el-input__wrapper {
 				padding: 0 !important;
@@ -18,26 +19,68 @@
 			}
 			.el-input__inner {
 				font-size: calc(var(--fontSize) * 1px);
-				color: unset;
 				user-select: none;
+				color: #00FFD7;
+			}
+			.el-input__suffix {
+				svg {
+					color: #00FFD7;
+				}
 			}
 		}
 	}
 	.first-class {
 		font-size: calc(var(--fontSize) * 1px);
+		color: #00FFD7;
 	}
 
 	.first-class.is-out {
+		opacity: 0.5;
 		&:hover {
-			color: red;
+			opacity: unset;
 		}
 	}
 	
 	.split-symbol {
-		margin: 0 8px 0 8px;
+		margin: 0 16px 0 17px;
 		font-size: calc(var(--fontSize) * 1px);
+		color: #00FFD7;
+	}
+
+	.is-none-pointer {
+		pointer-events: none;
 	}
 </style>
+<style lang="scss">
+	.select-popper {
+		z-index: 6000 !important;
+
+		width: 210px;
+		background: rgba(2, 19, 28, 0.9);
+		box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.6);
+		border-radius: 4px;
+
+		.el-select-dropdown__item {
+			height: 54px;
+			background: transparent;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			&:hover {
+				background: rgba(10, 172, 172, 0.2)
+			}
+			span {
+				font-size: 24px;
+				font-family: Source Han Sans CN;
+				font-weight: 400;
+				color: #6EFFF6;
+				line-height: 1;
+				opacity: 0.5;
+			}
+		}
+	}
+</style>
+
 
 <template>
 	<div class="header-options">
@@ -48,7 +91,11 @@
 		>
 			<span
 				class="first-class"
-				:class="overview.store.model ? 'is-out' : ''"
+				:class="[
+					overview.store.model ? 'is-out' : '',
+					overview.store.model ? '' : 'is-none-pointer'
+				]"
+				@click.capture="firstClassHandler"
 			>全部区域</span>
 			<template
 				v-if="overview.store.model"
@@ -57,6 +104,7 @@
 				<ElSelect
 					ref="elSelect"
 					v-model="selectContent"
+					popper-class="select-popper"
 					@change="selectChangeHandler"
 				>
 					<template
@@ -87,16 +135,18 @@
 		ref,
 		onMounted,
 		onUnmounted,
-		computed
+		computed,
+		inject,
+		Ref,
+		watchEffect,
 	} from 'vue';
-	
-	const fontSize = 32;
+	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
+	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
+	const fontSize = 28;
 	const elSelect = ref<unknown>(undefined);
 	const selectContent = ref<string | undefined>(undefined);
 	let elInput :HTMLInputElement | undefined = undefined;
-
-
-	overview.store.model = '光伏区域';
+	let resizeLock = 0;
 
 	const optionsList :string[] = [
 		'光伏区域',
@@ -104,6 +154,32 @@
 		'充电桩',
 		'智慧农业',
 	];
+
+	const modelMapR = new Map<string, string>([
+		['Camer_GuangFu_01', '储能区域'],
+		['Camera_ChuNeng', '储能区域'],
+		['Camera_ChongDianzhuang', '充电桩'],
+		['Camer_Zihui', '智慧农业'],
+	]);
+
+	watchEffect(() => {
+		if(! iframeSendMsg || ! iframeSendMsg.value) return;
+
+		const msg = iframeSendMsg.value;
+		
+		if(typeof msg === 'object' && 'ctid' in msg && 'areaid' in msg &&
+			msg.ctid == 12521
+		) {
+			overview.store.model = 
+				modelMapR.get(msg.areaid as string);
+		}
+	});
+
+	const firstClassHandler = (event :MouseEvent) => {
+		overview.store.model = undefined;
+		iframeReceMsg && overview.useSyncer(iframeReceMsg);
+		event.stopPropagation();
+	};
 
 	const getOptions = computed(() => {
 		return optionsList.filter(item => item !== overview.store.model);
@@ -147,13 +223,27 @@
 					]
 				];
 
-				Object.assign(
+/* 				Object.assign(
 					el.style,
 					{
 						width: w.toString() + 'px',
 						height: h.toString() + 'px',
 					}
-				);
+				); */
+
+					const elStyle = 
+						document.createElement('style') as HTMLStyleElement;
+					
+					elStyle.innerHTML = `
+						.input-size-adapter {
+							width: ${w.toString() + 'px;'}
+							height: ${h.toString() + 'px;'}
+						}
+					`;
+
+					document.head.append(elStyle);
+					
+					el.classList.add('input-size-adapter');
 			})(ctx);
 		};
 	};
@@ -165,7 +255,11 @@
 	const selectChangeHandler = (
 		value :unknown
 	) => {
-		adapter(value as string, elInput!);
+		/* adapter(value as string, elInput!); */
+
+		overview.store.model = value as string;
+
+		iframeReceMsg && overview.useSyncer(iframeReceMsg);
 	};
 
 	const selectBoxInit = () => {
@@ -182,13 +276,35 @@
 
 				selectContent.value = overview.store.model;
 
-				adapter(overview.store.model, elInput);
+				adapter(overview.store.model!, elInput);
 			})(elInput);
 		})(el)
 	};
 
 	onMounted(() => {
-		selectBoxInit();
+		/* selectBoxInit(); */
+
+		watchEffect(() => {
+			if(
+				! overview.store.model ||
+				! elSelect.value/*  ||
+				resizeLock === 1 */
+			) return;
+
+			resizeLock = 1;
+
+			const {$el: el} = elSelect.value as {$el :HTMLElement};
+
+			el && (function(el) {
+				elInput = el.querySelector('.el-input__inner') as HTMLInputElement;
+
+				elInput && (elInput => {
+					selectContent.value = overview.store.model;
+
+					adapter(overview.store.model!, elInput);
+				})(elInput);
+			})(el)
+		});
 	});
 
 	onUnmounted(() => {
