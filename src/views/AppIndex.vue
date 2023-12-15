@@ -2,9 +2,9 @@
 	iframe.UEScreen {
 		position: fixed;
 		top: 0;left: 0;
-		width: 100vw;
-		height: 100vh;
 		z-index: 4000;
+		width: 3840px;
+		height: 2160px;
 	}
 </style>
 
@@ -40,7 +40,7 @@
 	provide('iframeReceMsg', iframeReceMsg);
 
 	const UEScreen = {
-		src: 'http://192.168.1.114:18901',
+		src: 'http://192.168.1.95:16900/index.html',
 		message: iframeReceMsg,
 		handler(message :unknown) {
 			const isUEMessage = (

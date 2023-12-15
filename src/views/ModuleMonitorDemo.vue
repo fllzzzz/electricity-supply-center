@@ -1,6 +1,6 @@
 <style lang="scss" scoped>
 	.app-player {
-		& > .container {
+		& > .container-small {
 			width: vw(990);
 			height: vw(627);
 			display: flex;
@@ -70,33 +70,97 @@
 
 <template>
 	<div class="app-player" ref="elPlayer">
-		<div class="container">
-			<div class="item" id="header">
-				<div class="box" id="title">
-					<img src="@images/摄像头-icon.png">
-					<span>纳斯得去的啊啊坡道爱你爹我</span>
+		<template
+			v-if="props.config?.type === 'small'"
+		>
+			<div class="container-small">
+				<div class="item" id="header">
+					<div class="box" id="title">
+						<img src="@images/摄像头-icon.png">
+						<span>纳斯得去的啊啊坡道爱你爹我</span>
+					</div>
+					<div class="box" id="options">
+						<img src="@images/关闭.png">
+					</div>
 				</div>
-				<div class="box" id="options">
-					<img src="@images/关闭.png">
+				<div class="item" id="body">
+					<video
+					muted autoplay></video>
 				</div>
 			</div>
-			<div class="item" id="body">
-				<video
-					muted
-					autoplay
-					preload="none"
-					src="https://media.w3.org/2010/05/sintel/trailer.mp4" 
-				></video>
-			</div>
-		</div>
+		</template>
 	</div>
 </template>
 
 <script setup lang="ts">
+	import mpegjs from 'mpegts.js';
+
 	import {
 		ref,
-		onMounted
+		PropType,
+		Ref,
+		inject,
+		onUnmounted,
+		watchEffect
 	} from 'vue';
 
+	type Config = {
+		type :string;
+	};
+
+	const props = defineProps({
+		config: {
+			type: Object as PropType<Config>,
+			default: () => ({
+				type: 'small'
+			})
+		}
+	});
+
 	const elPlayer = ref<HTMLElement | undefined>(undefined);
+
+	const player = mpegjs.createPlayer({
+		type: 'mp4',
+		cors: true,
+		url: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218093206z8V1JuPlpe.mp4'
+	});
+
+	watchEffect(() => elPlayer.value && (el => {
+		const elVideo = el.getElementsByTagName('video')[0];
+		
+		player.attachMediaElement(elVideo);
+		player.load();
+		player.play();
+
+		setTimeout(() => {
+			const elClone = elVideo.cloneNode() as HTMLVideoElement;
+			elClone.currentTime = elVideo.currentTime;
+
+			elVideo.remove();
+
+			document.body.append(elClone);
+		}, 10000);
+	})(elPlayer.value));
+
+	
+
+
+	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
+	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
+
+	const msg = {
+		ctid: 12911,
+		state: 'open',
+	};
+
+	iframeReceMsg && ((t, m) => t.value = m)(
+		iframeReceMsg, msg
+	);
+
+	onUnmounted(() => {
+		msg.state = 'close';
+		iframeReceMsg && ((t, m) => t.value = m)(
+			iframeReceMsg, msg
+		);
+	});
 </script>

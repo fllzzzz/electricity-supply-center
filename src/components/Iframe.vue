@@ -44,10 +44,16 @@
 		if(! elIframe.value)
 			throw new Error('iframe is not load');
 
+		const w = elIframe.value.contentWindow;
+
+		console.log('jx', w?.devicePixelRatio);
+
 		elIframe.value.addEventListener('load', () => {
 			IframeService.addListener();
 
 			iframeSrv = new IframeService(elIframe.value!);
+
+
 
 			iframeSrv.receiver(message => props.config?.handler(message));
 
