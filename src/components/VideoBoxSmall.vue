@@ -95,9 +95,7 @@
 			</div>
 		</div>
 		<div class="jx-video__item" id="body">
-			<div class="body-wrapper" id="main">
-				<slot></slot>
-			</div>
+			<div class="body-wrapper" id="main" ref="elTelpTarget"></div>
 		</div>
 	</div>
 </template>
@@ -113,7 +111,7 @@
 		'mounted', 'sizeUp', 'close'
 	]);
 
-	const elSlot = ref<HTMLMediaElement | undefined>(undefined);
+	const elTelpTarget = ref<HTMLElement | undefined>(undefined);
 
 	const headerOptionInfoList = reactive([
 		{
@@ -148,5 +146,8 @@
 		})(el);
 	};
 
-	onMounted(() => emits('mounted'));
+	onMounted(() => {
+		elTelpTarget.value &&
+		emits('mounted', elTelpTarget.value)
+	});
 </script>

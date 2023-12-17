@@ -17,11 +17,20 @@
 			@sizeDown="sizeDownHandler"
 			@close="closeHandler"
 		>
-			<video
-				muted autoplay
-				ref="elVideo"
-			></video>
 		</component>
+		<template
+			v-if="targetInfo.src"
+		>
+			<Teleport
+				:to="telpTarget"
+			>
+				<video
+					muted autoplay
+					ref="elVideo"
+					v-show="telpTarget !== 'body'"
+				></video>
+			</Teleport>
+		</template>
 	</template>
 </template>
 
@@ -34,7 +43,6 @@
 		reactive,
 		watchEffect,
 		defineAsyncComponent,
-		onMounted,
 		onUnmounted,
 	} from 'vue';
 
@@ -54,6 +62,7 @@
 	]);
 
 	let player :mpegts.Player | undefined;
+	const telpTarget = ref<string | HTMLElement>('body');
 	const targetInfo = reactive<Partial<Config>>({});
 	const elVideo = ref<HTMLMediaElement | undefined>(undefined);
 	const compMap = new Map<string, unknown>([
@@ -74,7 +83,7 @@
 		}
 
 		const _player = mpegts.createPlayer({
-			type: 'flv',
+			type: 'mp4',
 			cors: true,
 			url: src
 		});
@@ -90,19 +99,29 @@
 		return _player;
 	};
 
-	const sizeUpHandler = () => targetInfo.type = 'large';
-	const sizeDownHandler = () => targetInfo.type = 'small';
-	const mountedHandler = () => {
-		elVideo.value &&
-		targetInfo.src &&
-		((el, src) => watchEffect(() => player = creatPlayer(
-			el, src
-		)))(elVideo.value, targetInfo.src);
+	const sizeUpHandler = () => {
+		telpTarget.value = 'body';
+		targetInfo.type = 'large'
+	};
+	const sizeDownHandler = () => {
+		telpTarget.value = 'body';
+		targetInfo.type = 'small'
+	};
+	const mountedHandler = (elTelpTarget :HTMLElement) => {
+		telpTarget.value = elTelpTarget;
 	};
 	const closeHandler = () => {
 		targetInfo.type = undefined
 		emits('close');
 	};
+
+	watchEffect(() => {
+		elVideo.value &&
+		targetInfo.src &&
+		((el, src) => watchEffect(() => player = creatPlayer(
+			el, src
+		)))(elVideo.value, targetInfo.src);
+	});
 
 	watchEffect(() => {
 		[

@@ -95,7 +95,7 @@
 			</div>
 		</div>
 		<div class="jx-video__item" id="body">
-			<div class="body-wrapper" id="main">
+			<div class="body-wrapper" id="main" ref="elTelpTarget">
 				<slot></slot>
 			</div>
 		</div>
@@ -104,13 +104,16 @@
 
 <script setup lang="ts">
 	import {
+		ref,
 		reactive,
 		onMounted
 	} from 'vue';
 
 	const emits = defineEmits([
-	'mounted', 'sizeDown', 'close'
+		'mounted', 'sizeDown', 'close'
 	]);
+
+	const elTelpTarget = ref<HTMLElement | undefined>(undefined);
 
 	const headerOptionInfoList = reactive([
 		{
@@ -145,5 +148,8 @@
 		})(el);
 	};
 
-	onMounted(() => emits('mounted'));
+	onMounted(() => {
+		elTelpTarget.value &&
+		emits('mounted', elTelpTarget.value)
+	});
 </script>
