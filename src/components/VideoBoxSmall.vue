@@ -104,12 +104,16 @@
 
 <script setup lang="ts">
 	import {
+		ref,
 		reactive,
+		onMounted
 	} from 'vue';
 
 	const emits = defineEmits([
-		'sizeUp', 'close'
+		'mounted', 'sizeUp', 'close'
 	]);
+
+	const elSlot = ref<HTMLMediaElement | undefined>(undefined);
 
 	const headerOptionInfoList = reactive([
 		{
@@ -143,4 +147,6 @@
 			fn && fn(event);
 		})(el);
 	};
+
+	onMounted(() => emits('mounted'));
 </script>

@@ -105,10 +105,11 @@
 <script setup lang="ts">
 	import {
 		reactive,
+		onMounted
 	} from 'vue';
 
 	const emits = defineEmits([
-		'sizeDown', 'close'
+	'mounted', 'sizeDown', 'close'
 	]);
 
 	const headerOptionInfoList = reactive([
@@ -143,4 +144,6 @@
 			fn && fn(event);
 		})(el);
 	};
+
+	onMounted(() => emits('mounted'));
 </script>
