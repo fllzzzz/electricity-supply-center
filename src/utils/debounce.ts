@@ -15,7 +15,10 @@ const useDebdounce = <T, F extends ((...args :any[]) => void)>(
 		}else if(firstBootFlg === 0) {
 			clearTimeout(delayTimer);
 			delayTimer = setTimeout(
-				() => fn.bind(this, ...args)(),
+				() => {
+					fn.bind(this, ...args)();
+					firstBootFlg = 1;
+				},
 				time
 			);
 		}else {

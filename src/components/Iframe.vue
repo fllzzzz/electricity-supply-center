@@ -27,7 +27,7 @@
 
 	type Config = {
 		src :string;
-		message :Ref<unknown>;
+		message :unknown;
 		handler :((message :unknown) => void)
 	};
 
@@ -40,13 +40,16 @@
 	let iframeSrv :IframeService;
 	const elIframe = ref<HTMLIFrameElement | undefined>(undefined);
 
+	watchEffect(() => {
+		console.log('jx@iframe=>recver', props.config?.message);
+	});
+
 	onMounted(() => {
+
 		if(! elIframe.value)
 			throw new Error('iframe is not load');
 
 		const w = elIframe.value.contentWindow;
-
-		console.log('jx', w?.devicePixelRatio);
 
 		elIframe.value.addEventListener('load', () => {
 			IframeService.addListener();
@@ -58,9 +61,9 @@
 			iframeSrv.receiver(message => props.config?.handler(message));
 
 			watchEffect(() => {
-				if(! props.config?.message.value) return;
+				if(! props.config?.message) return;
 
-				iframeSrv.sender(props.config?.message.value)
+				iframeSrv.sender(props.config?.message)
 			});
 		});
 	});

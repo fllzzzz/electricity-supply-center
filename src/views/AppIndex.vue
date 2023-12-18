@@ -29,8 +29,9 @@
 	import Header from '@/components/Header.vue';
 
 	import {
-		ref,
+		ref,reactive,
 		provide,
+		watchEffect,
 	} from 'vue';
 
 	const iframeSendMsg = ref<unknown>();
@@ -39,9 +40,9 @@
 	provide('iframeSendMsg', iframeSendMsg);
 	provide('iframeReceMsg', iframeReceMsg);
 
-	const UEScreen = {
-		src: 'http://192.168.1.95:16900/index.html',
-		message: iframeReceMsg,
+	const UEScreen = reactive({
+		src: 'http://192.168.1.114:18901',
+		message: '' as any,
 		handler(message :unknown) {
 			const isUEMessage = (
 				message :unknown
@@ -56,5 +57,9 @@
 
 			iframeSendMsg.value = message;
 		}
-	};
+	})
+
+	watchEffect(() => {
+		UEScreen.message = iframeReceMsg.value;
+	})
 </script>

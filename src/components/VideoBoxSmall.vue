@@ -6,6 +6,7 @@
 		flex-flow: column nowrap;
 		justify-content: flex-start;
 		align-items: flex-start;
+		pointer-events: auto;
 
 		.jx-video__item {
 			width: 100%;

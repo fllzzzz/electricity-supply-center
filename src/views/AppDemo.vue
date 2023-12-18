@@ -1,17 +1,16 @@
 <style lang="scss" scoped>
+	.container {
+		width: vw(684);
+		height: vw(217);
+	}
 </style>
 
 <template>
 	<div class="container">
-		<HeaderOptions></HeaderOptions>
+		<LightSimulation></LightSimulation>
 	</div>
 </template>
+
 <script setup lang="ts">
-	import HeaderOptions from '@/components/HeaderOptions.vue';
-
-	import {
-		overview
-	} from '@/store';
-
-	overview.store.model = '光伏区域';
+	import LightSimulation from '@/components/LightSimulation.vue';
 </script>
