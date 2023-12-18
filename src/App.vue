@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+	import LayoutService from '@/services/LayoutService';
+
 	import 'element-plus/dist/index.css'
 
 	import {
@@ -23,7 +25,7 @@
 		onMounted
 	} from 'vue';
 
-	const designRatio = 0.56275;
+/* 	const designRatio = 0.56275;
 
 	const handler = repeatDelay<((
 		entryList : ResizeObserverEntry[]
@@ -37,5 +39,15 @@
 	onMounted(() => {
 		new ResizeObserver(handler)
 			.observe(document.documentElement);
+	}); */
+
+	onMounted(() => {
+		new LayoutService(
+			document.documentElement,
+			{
+				width: 3840,
+				height: 2160
+			}, 20
+		).useReactiveFontSize()
 	});
 </script>
