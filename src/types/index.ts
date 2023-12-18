@@ -1,4 +1,4 @@
-export type UEMessage = {
+export type UEScreenMessage = {
 	ctid :number;
-	[key :string] :any;
-}
+	[key :string] :unknown;
+};

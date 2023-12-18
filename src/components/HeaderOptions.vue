@@ -140,8 +140,6 @@
 		Ref,
 		watchEffect,
 	} from 'vue';
-	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
-	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
 	const fontSize = 28;
 	const elSelect = ref<unknown>(undefined);
 	const selectContent = ref<string | undefined>(undefined);
@@ -163,21 +161,12 @@
 	]);
 
 	watchEffect(() => {
-		if(! iframeSendMsg || ! iframeSendMsg.value) return;
 
-		const msg = iframeSendMsg.value;
-		
-		if(typeof msg === 'object' && 'ctid' in msg && 'areaid' in msg &&
-			msg.ctid == 12521
-		) {
-			overview.store.model = 
-				modelMapR.get(msg.areaid as string);
-		}
 	});
 
 	const firstClassHandler = (event :MouseEvent) => {
 		overview.store.model = undefined;
-		iframeReceMsg && overview.useSyncer(iframeReceMsg);
+
 		event.stopPropagation();
 	};
 
@@ -218,18 +207,8 @@
 					[
 						Math.abs(mst.fontBoundingBoxAscent) +
 						Math.abs(mst.fontBoundingBoxDescent)
-/* 						Math.abs(mst.actualBoundingBoxAscent) +
-						Math.abs(mst.actualBoundingBoxDescent) */
 					]
 				];
-
-/* 				Object.assign(
-					el.style,
-					{
-						width: w.toString() + 'px',
-						height: h.toString() + 'px',
-					}
-				); */
 
 					const elStyle = 
 						document.createElement('style') as HTMLStyleElement;
@@ -258,8 +237,6 @@
 		/* adapter(value as string, elInput!); */
 
 		overview.store.model = value as string;
-
-		iframeReceMsg && overview.useSyncer(iframeReceMsg);
 	};
 
 	const selectBoxInit = () => {
@@ -282,13 +259,10 @@
 	};
 
 	onMounted(() => {
-		/* selectBoxInit(); */
-
 		watchEffect(() => {
 			if(
 				! overview.store.model ||
-				! elSelect.value/*  ||
-				resizeLock === 1 */
+				! elSelect.value
 			) return;
 
 			resizeLock = 1;

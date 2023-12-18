@@ -25,11 +25,6 @@
 </template>
 
 <script setup lang="ts">
-	import {
-		ref,Ref,
-		inject
-	} from 'vue';
-
 	const imageList = [
 		{
 			img: require<string>('@images/光伏发电量.png'),
@@ -56,15 +51,4 @@
 			position: [3122, 1150]
 		},
 	];
-
-	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
-	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
-
-	const msg = {
-		ctid: 12711
-	};
-
-	iframeReceMsg && ((t, m) => t.value = m)(
-		iframeReceMsg, msg
-	);
 </script>

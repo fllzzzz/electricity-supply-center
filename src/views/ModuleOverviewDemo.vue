@@ -21,9 +21,7 @@
 				left: (item.position[0] / 3840 * 100).toString() + 'vw',
 				top: (item.position[1] / 3840 * 100).toString() + 'vw',
 			}">
-			<component :is="item.instance"
-				:ifRece="iframeReceMsg"
-			></component>
+			<component :is="item.instance"></component>
 		</div>
 	</template>
 </template>
@@ -34,12 +32,8 @@
 	} from '@/store';
 
 	import {
-		ref,
-		Ref,
-		inject,
-		reactive,
 		computed,
-		watchEffect,
+		onMounted,
 		onUnmounted,
 		defineAsyncComponent
 	} from 'vue';
@@ -85,18 +79,6 @@
 		if(targetKey) return imageGroup[targetKey as keyof typeof imageGroup];
 		return imageGroup.default;
 	});
-
-
-	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
-	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
-
-	const msg = {
-		ctid: 10111
-	};
-
-	iframeReceMsg && ((t, m) => t.value = m)(
-		iframeReceMsg, msg
-	);
 
 	onUnmounted(() => {
 		overview.store.model = undefined;

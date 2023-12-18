@@ -1,3 +1,9 @@
+import MessageObserver from '@/services/MessageObserver';
+
+import {
+	UEScreenMessage
+} from '@/types';
+
 import {
 	reactive,
 	Ref
@@ -38,4 +44,12 @@ import {
 
 		target.value = msg;
 	};
+};
+
+export namespace iframe {
+	export const toUEMessage = MessageObserver.createObservation<{
+		value :Partial<UEScreenMessage>
+	}>('toUEScreen', {
+		value: {}
+	});
 };

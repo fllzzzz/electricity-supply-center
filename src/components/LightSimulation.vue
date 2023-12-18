@@ -155,23 +155,6 @@
 	const sliderToipAwaysShow = ref(false);
 	const sliderValue = ref(0);
 	let sliderToipStr :string;
-
-	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
-	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
-
-	const msg = {
-		ctid: 12121,
-		time: ''
-	}
-
-	const fn = useDebdounce((...args :any[]) => {
-		msg.time = args[0];
-
-		args[1] &&
-		((i, m) => i.value = m)(args[1], msg);
-
-		console.log('==',args[1]);
-	}, 1000);
 	
 	watchEffect((() => {
 		const lapse = Math.ceil(100 / 12);
@@ -227,8 +210,6 @@
 			}else {
 				sliderToipStr = `${config.startTime! + index +1}:00`;
 			}
-
-			fn(sliderToipStr, iframeReceMsg);
 		};
 	})());
 

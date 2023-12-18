@@ -25,10 +25,7 @@
 	import VideoBox from '@/components/VideoBox.vue';
 
 	import {
-		Ref,
 		ref,
-		inject,
-		onUnmounted,
 	} from 'vue';
 
 	const videoBoxState = ref(true);
@@ -36,23 +33,4 @@
 	const closeHandler = () => {
 		videoBoxState.value = false;
 	};
-
-	const iframeReceMsg :Ref<unknown> | undefined = inject('iframeReceMsg');
-	const iframeSendMsg :Ref<unknown> | undefined = inject('iframeSendMsg');
-
-	const msg = {
-		ctid: 12911,
-		state: 'open',
-	};
-
-	iframeReceMsg && ((t, m) => t.value = m)(
-		iframeReceMsg, msg
-	);
-
-	onUnmounted(() => {
-		msg.state = 'close';
-		iframeReceMsg && ((t, m) => t.value = m)(
-			iframeReceMsg, msg
-		);
-	});
 </script>

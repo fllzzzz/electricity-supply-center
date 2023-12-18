@@ -4,7 +4,7 @@
 
 <template>
 	<template
-		v-if="props.config && props.config.src"
+		v-if="props.config?.src"
 	>
 		<iframe
 			ref="elIframe"
@@ -14,21 +14,22 @@
 </template>
 
 <script setup lang="ts">
-	import IframeService from '@/services/iframeService';
+	import MessageObserver from '@/services/MessageObserver';
 
 	import {
-		ref,
-		Ref,
+		UEScreenMessage
+	} from '@/types';
+
+	import {
 		PropType,
+		ref,
+		computed,
 		onMounted,
-		onUnmounted,
-		watchEffect
+		onUnmounted
 	} from 'vue';
 
 	type Config = {
 		src :string;
-		message :unknown;
-		handler :((message :unknown) => void)
 	};
 
 	const props = defineProps({
@@ -37,39 +38,60 @@
 		}
 	});
 
-	let iframeSrv :IframeService;
 	const elIframe = ref<HTMLIFrameElement | undefined>(undefined);
-
-	watchEffect(() => {
-		console.log('jx@iframe=>recver', props.config?.message);
+	const toWebMessage = MessageObserver.createObservation<{
+		value :Partial<UEScreenMessage>
+	}>('toWebScreen', {
+		value: {}
 	});
 
+	const getIframeSrc = computed(() => {
+		const result = props.config?.src.match(
+			new RegExp('(?:http|https)://(?:.*[0-9])', 'g')
+		);
+
+		return result ? result[0] : '';
+	});
+
+	const isString = (x :unknown) :x is string => {
+		if(typeof x === 'string') return true;
+		return false;
+	};
+
+	const isUEScreenMessage = (x :object) :x is UEScreenMessage => {
+		if('ctid' in x) return true;
+		return false;
+	};
+
+	const messageEventHandler = (
+		event :MessageEvent<unknown>
+	) => {
+		if(isString(event.data)) {
+			const data = JSON.parse(event.data);
+			if(isUEScreenMessage(data)) {
+				toWebMessage.value = data;
+			}
+		}
+	};
+
 	onMounted(() => {
+		elIframe.value &&
+		elIframe.value.contentWindow &&
+		(window => {
+			MessageObserver.registObserver<(
+				(message :unknown) => void
+			)>(
+				message => window.postMessage(
+					message, getIframeSrc.value
+				), 'toUEScreen'
+			);
+		})
+		(elIframe.value.contentWindow);
 
-		if(! elIframe.value)
-			throw new Error('iframe is not load');
-
-		const w = elIframe.value.contentWindow;
-
-		elIframe.value.addEventListener('load', () => {
-			IframeService.addListener();
-
-			iframeSrv = new IframeService(elIframe.value!);
-
-
-
-			iframeSrv.receiver(message => props.config?.handler(message));
-
-			watchEffect(() => {
-				if(! props.config?.message) return;
-
-				iframeSrv.sender(props.config?.message)
-			});
-		});
+		window.addEventListener('message', messageEventHandler);
 	});
 
 	onUnmounted(() => {
-		IframeService.removeListener();
-		iframeSrv.removeReveicer();
+		window.removeEventListener('message', messageEventHandler);
 	});
 </script>
