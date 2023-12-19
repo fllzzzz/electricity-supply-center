@@ -115,14 +115,14 @@
 						:tooltip="true"
 						:show-tooltip="sliderToipAwaysShow"
 						placement="bottom"
-						:format-tooltip="sliderToipFormater"
+						:format-tooltip="sliderTotipHandler"
 					></NSlider>
 				</div>
 				<div class="light-simulation__wrapper" id="end-time">
 					<span>{{ config.endTime + ':00' }}</span>
 				</div>
 				<div class="light-simulation__wrapper" id="option">
-					<img :src="playerManager.img.value"
+					<img :src="playerManager.image.value"
 						@click="playerManager.clickHandler"
 					>
 				</div>
@@ -145,7 +145,6 @@
 	import {
 		ref,
 		reactive,
-		watch,
 		computed,
 	} from 'vue';
 
@@ -155,47 +154,47 @@
 	};
 
 	const config = reactive<Config>({
-		startTime: 6,
-		endTime: 18
+		startTime: 1,
+		endTime: 4
 	});
 
 	const sliderStyle = {
 		'--n-handle-size': (20 / 3840 * 100).toString() + 'vw',
 	};
 	
-	const sliderToipAwaysShow = ref(false);
 	const sliderValue = ref(0);
-	let sliderToipStr :string;
+	const sliderToipAwaysShow = ref(false);
 
 	const playerManager = {
 		isPlay: ref(false),
 		isPlayed: false,
-		imgMap: new Map([
-			['play', require<string>('@images/播放.png')],
-			['pause', require<string>('@images/暂停.png')],
-		]),
-		get img() {
+		interval: 100,
+		durationTime: 10000,
+		loopTimer: -1,
+
+		get image() {
 			return computed(() => {
-				if(this.isPlay.value) return this.imgMap.get('pause')!;
-				return this.imgMap.get('play')!;
+				if(! this.isPlay.value) {
+					return require<string>('@images/播放.png');
+				}
+				return require<string>('@images/暂停.png');
 			});
 		},
-		interval: Math.ceil(10000 / 100),
-		repeatHandler() {
+		
+		loopHandler() {
 			if(sliderValue.value < 100) {
-				sliderValue.value++;
+				sliderValue.value += (100 / this.durationTime) * this.interval;
 				return;
 			}
 
-			clearInterval(this.timer);
+			clearInterval(this.loopTimer);
 			this.isPlayed = false;
 			if(this.isPlay.value)
 				this.isPlay.value = false;
 			if(sliderToipAwaysShow.value)
 				sliderToipAwaysShow.value = false;
 		},
-		timer: -1,
-		playerHandler() {
+		playHandler() {
 			if(! this.isPlay.value)
 				this.isPlay.value = true;
 
@@ -207,14 +206,13 @@
 			if(! sliderToipAwaysShow.value)
 				sliderToipAwaysShow.value = true;
 
-			this.repeatHandler();
-			this.timer = setInterval(
-				() => this.repeatHandler(),
-				this.interval
+			this.loopHandler();
+			this.loopTimer = setInterval(
+				() => this.loopHandler(),this.interval
 			); 
 		},
 		pasueHandler() {
-			clearInterval(this.timer);
+			clearInterval(this.loopTimer);
 			if(this.isPlay.value)
 				this.isPlay.value = false;
 		},
@@ -222,40 +220,65 @@
 			if(this.isPlay.value) {
 				this.pasueHandler()
 			}else {
-				this.playerHandler()
+				this.playHandler()
 			};
 		}
 	};
 
-	watch(sliderValue, ((
+	const messageTransporter = throttle<
+		((
+			time :string
+		) => Promise<boolean>)
+	>(async time => {
+		return await new Promise<boolean>(resolve => {
+			iframe.toUEMessage.value = {
+				ctid: 12121, time
+			};
+			resolve(true);
+		}); 
+	}, 100);
+
+	const sliderTotipFormater = ((
 		config: {
 			startTime :number
 			endTime :number
-		}
+		},
+		fn :((value :string) => string)
 	) => {
 		const _anchorPointList = (function() {
-			const result :number[] = [];
-			const lapse = Math.ceil(
-				100 / Math.abs(config.endTime - config.startTime)
-			);
+			const diff = Math.abs(config.endTime - config.startTime);
+			const lapse = Math.floor(100 / diff);
 
-			let i = 100;
-			while(1) {
-				i -= lapse;
-				if(i <= 0) {
-					result.unshift(100);
-					result.reverse();
-					break;
-				}
+			const builder = (function(_diff :number, _lapse :number) {
+				let _count = 0;
+				const _result :number[] = [];
 
-				result.push(i);
-			}
+				function _handler() {
+					if(
+						_result.length === _diff &&
+						_result[_result.length - 1] >= 100
+					) {
+						_result[_result.length - 1] = 100;
+						return _result;
+					};
 
-			return result;
+					_result.length = 0;
+					for(let i = 1; i <= _diff; i++) {
+						_result.push(i * _lapse + _count);
+					}
+					_count += 0.2;
+					return _handler();
+				};
+
+				return () => _handler();
+			})(diff, lapse);
+
+			return builder();
 		})();
 
 		const _getTotipValue = (() => {
 			let _result :string;
+			let _isFirstBoot = true;
 
 			return function (
 				value :number,
@@ -264,7 +287,18 @@
 			) :string | never {
 				_result = `${startTime}:00`;
 
-				const index = target.indexOf(value);
+				const celiIndex = target.indexOf(Math.ceil(value));
+				const floorIndex = target.indexOf(Math.floor(value));
+
+				const index =
+					celiIndex !== -1 ?
+					celiIndex : floorIndex !== -1 ?
+					floorIndex : -1;
+
+				if(_isFirstBoot) {
+					_isFirstBoot = false;
+					return _result;
+				}
 
 				if(index === -1) {
 					const limits = [
@@ -282,21 +316,12 @@
 						limits[0] : limits[1];
 					
 					const _index = target.indexOf(_target);
-						
-					_result = `${startTime + _index + 1}:00`;
 
-/* 					console.log(
-						'@light ==>', '\r\n',
-						'value: ', value, '\r\n',
-						'limits: ', limits, '\r\n',
-						'target: ', _target, '\r\n',
-						'index: ', _index, '\r\n',
-						'result: ', _result, '\r\n',
-					); */
+					_result = `${startTime + _index}:00`;
 
 					return _result;
 				} else if(index >= 0) {
-					_result = `${startTime + index + 1}:00`;
+					_result = `${startTime + index}:00`;
 
 					return _result;
 				}else {
@@ -305,37 +330,21 @@
 			}
 		})();
 
-		const _messageTransporter = throttle<
-			((
-				time :string
-			) => Promise<boolean>)
-		>(async time => {
-			return await new Promise<boolean>(resolve => {
-				iframe.toUEMessage.value = {
-					ctid: 12121, time
-				};
-				resolve(true);
-			}); 
-		}, 100);
-
-		return (value :number) => {
-			const toptipValue = _getTotipValue(
+		return (value :number) => fn(
+			_getTotipValue(
 				value,
 				_anchorPointList,
 				config.startTime
-			);
+			)
+		);
+	});
 
-			sliderToipStr = toptipValue;
-			
-			_messageTransporter(toptipValue.split(':')[0]);
-		};
-	})
-	({
+	const sliderTotipHandler = sliderTotipFormater({
 		startTime: config.startTime,
 		endTime: config.endTime
-	}));
+	}, value => {
+		messageTransporter(value.split(':')[0]);
 
-	const sliderToipFormater = (value :number) => {
-		return sliderToipStr;
-	};
+		return value;
+	});
 </script>
