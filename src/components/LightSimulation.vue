@@ -88,6 +88,7 @@
 		color: #FFFFFF !important;
 		line-height: 1 !important;
 		opacity: 0.5 !important;
+		/* transition: all 3s linear !important; */
 	}
 
 	.v-binder-follower-container {
@@ -167,44 +168,62 @@
 	let sliderToipStr :string;
 
 	const playerManager = {
-		count: 0,
-		isPlayer: ref(false),
+		isPlay: ref(false),
+		isPlayed: false,
 		imgMap: new Map([
 			['play', require<string>('@images/播放.png')],
 			['pause', require<string>('@images/暂停.png')],
 		]),
 		get img() {
 			return computed(() => {
-				if(this.isPlayer.value) return this.imgMap.get('pause')!;
+				if(this.isPlay.value) return this.imgMap.get('pause')!;
 				return this.imgMap.get('play')!;
 			});
 		},
 		interval: Math.ceil(10000 / 100),
 		repeatHandler() {
-			sliderValue.value ++;
+			if(sliderValue.value < 100) {
+				sliderValue.value++;
+				return;
+			}
+
+			clearInterval(this.timer);
+			this.isPlayed = false;
+			if(this.isPlay.value)
+				this.isPlay.value = false;
+			if(sliderToipAwaysShow.value)
+				sliderToipAwaysShow.value = false;
 		},
 		timer: -1,
-		clickHandler() {
-			this.count++;
-			this.isPlayer.value = ! this.isPlayer.value;
+		playerHandler() {
+			if(! this.isPlay.value)
+				this.isPlay.value = true;
 
-			if(this.isPlayer) {
+			if(! this.isPlayed) {
 				sliderValue.value = 0;
-				sliderToipAwaysShow.value = ! sliderToipAwaysShow.value;
-				this.repeatHandler();
-				this.timer = setInterval(() => {
-					if(sliderValue.value >= 100) {
-						clearInterval(this.timer);
-						this.isPlayer.value = ! this.isPlayer.value;
-						sliderToipAwaysShow.value = ! sliderToipAwaysShow.value;
-						return;
-					}
-					this.repeatHandler();
-				}, this.interval); 
-			}else {
-				clearInterval(this.timer);
-				sliderValue.value = 0;
+				this.isPlayed = true;
 			}
+
+			if(! sliderToipAwaysShow.value)
+				sliderToipAwaysShow.value = true;
+
+			this.repeatHandler();
+			this.timer = setInterval(
+				() => this.repeatHandler(),
+				this.interval
+			); 
+		},
+		pasueHandler() {
+			clearInterval(this.timer);
+			if(this.isPlay.value)
+				this.isPlay.value = false;
+		},
+		clickHandler() {
+			if(this.isPlay.value) {
+				this.pasueHandler()
+			}else {
+				this.playerHandler()
+			};
 		}
 	};
 
@@ -258,13 +277,22 @@
 					];
 
 					const _target = 
-						Math.abs(value - limits[0]) > 
+						Math.abs(value - limits[0]) <
 						Math.abs(value - limits[1]) ?
 						limits[0] : limits[1];
 					
 					const _index = target.indexOf(_target);
 						
 					_result = `${startTime + _index + 1}:00`;
+
+/* 					console.log(
+						'@light ==>', '\r\n',
+						'value: ', value, '\r\n',
+						'limits: ', limits, '\r\n',
+						'target: ', _target, '\r\n',
+						'index: ', _index, '\r\n',
+						'result: ', _result, '\r\n',
+					); */
 
 					return _result;
 				} else if(index >= 0) {
