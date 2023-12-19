@@ -87,11 +87,11 @@
 		font-weight: 400 !important;
 		color: #FFFFFF !important;
 		line-height: 1 !important;
-		/* opacity: 0.5 !important; */
+		opacity: 0.5 !important;
 	}
 
 	.v-binder-follower-container {
-		z-index: 5000 !important;
+		z-index: 6000 !important;
 	}
 </style>
 
@@ -130,9 +130,7 @@
 	</Card>
 </template>
 <script setup lang="ts">
-	import useDebdounce from '@/utils/debounce';
-	import MessageObserver from '@/services/MessageObserver';
-
+	import throttle from '@/utils/throttle';
 	import Card from '@/components/Card.vue';
 
 	import {
@@ -144,9 +142,9 @@
 	} from 'naive-ui';
 
 	import {
-		ref,Ref,
+		ref,
 		reactive,
-		watchEffect,
+		watch,
 		computed,
 	} from 'vue';
 
@@ -155,7 +153,7 @@
 		endTime :number;
 	};
 
-	const config = reactive<Partial<Config>>({
+	const config = reactive<Config>({
 		startTime: 6,
 		endTime: 18
 	});
@@ -210,96 +208,104 @@
 		}
 	};
 
-
-
-	
-	const init = () => {
-		const lapse = Math.ceil(100 / 12);
-		let targetList :number[] = [];
-
-		let i = 100;
-		while(true) {
-			i -= lapse;
-
-			if(i <= 0) {
-				targetList = targetList.reverse();
-				targetList.push(100);
-				break;
-			}else {
-				targetList.push(i);
-			}
+	watch(sliderValue, ((
+		config: {
+			startTime :number
+			endTime :number
 		}
+	) => {
+		const _anchorPointList = (function() {
+			const result :number[] = [];
+			const lapse = Math.ceil(
+				100 / Math.abs(config.endTime - config.startTime)
+			);
 
-		sliderToipStr = '06:00'
-		let flg10 = 0;
-
-		return function(sliderValue :Ref<number>) {
-			flg10++;
-
-			const index = targetList.indexOf(sliderValue.value);
-			
-			const autoHandler = () => {
-				if(index !== -1) {
-					sliderToipStr = `${config.startTime! + index +1}:00`;
+			let i = 100;
+			while(1) {
+				i -= lapse;
+				if(i <= 0) {
+					result.unshift(100);
+					result.reverse();
+					break;
 				}
-			};
 
-			const clickHandler = () => {
-					if(index === -1) {
-					const maxList = 
-						targetList.filter(item => item > sliderValue.value);
-					const smallList =
-						targetList.filter(item => item < sliderValue.value);
+				result.push(i);
+			}
+
+			return result;
+		})();
+
+		const _getTotipValue = (() => {
+			let _result :string;
+
+			return function (
+				value :number,
+				target :number[],
+				startTime :number
+			) :string | never {
+				_result = `${startTime}:00`;
+
+				const index = target.indexOf(value);
+
+				if(index === -1) {
+					const limits = [
+						target.filter(
+							item => value > item ? true : false
+						).sort((a, b) => a < b ? 1 : -1)[0],
+						target.filter(
+							item => value > item ? false : true
+						).sort((a, b) => a < b ? -1 : 1)[0],
+					];
+
+					const _target = 
+						Math.abs(value - limits[0]) > 
+						Math.abs(value - limits[1]) ?
+						limits[0] : limits[1];
 					
-					smallList.sort((a, b) => {
-						if(a > b) return -1;
-						if(a < b) return 1;
-						if(a === b) return 0;
-						return 0;
-					});
+					const _index = target.indexOf(_target);
+						
+					_result = `${startTime + _index + 1}:00`;
 
-					maxList.sort((a, b) => {
-						if(a > b) return 1;
-						if(a < b) return -1;
-						if(a === b) return 0;
-						return 0;
-					});
+					return _result;
+				} else if(index >= 0) {
+					_result = `${startTime + index + 1}:00`;
 
-					const maxNum = maxList[0];
-					const minNum = smallList[0];
-
-					const maxDiff = Math.abs(maxNum - sliderValue.value);
-					const minddiff = Math.abs(minNum - sliderValue.value);
-
-					const target = maxDiff > minddiff ? maxNum : minNum;
-
-					const _index = targetList.indexOf(target);
-
-					sliderToipStr = `${config.startTime! + _index +1}:00`;
+					return _result;
 				}else {
-					sliderToipStr = `${config.startTime! + index +1}:00`;
-				}
-			};
-
-			if(flg10 >= 2) {
-				if(playerManager.isPlayer.value) {
-					autoHandler();
-				}else {
-					clickHandler();
-				}
-
-				try {
-					
-				} catch (error) {
-					console.log('jx',error);
+					throw new Error('index out of range');
 				}
 			}
+		})();
+
+		const _messageTransporter = throttle<
+			((
+				time :string
+			) => Promise<boolean>)
+		>(async time => {
+			return await new Promise<boolean>(resolve => {
+				iframe.toUEMessage.value = {
+					ctid: 12121, time
+				};
+				resolve(true);
+			}); 
+		}, 100);
+
+		return (value :number) => {
+			const toptipValue = _getTotipValue(
+				value,
+				_anchorPointList,
+				config.startTime
+			);
+
+			sliderToipStr = toptipValue;
+			
+			_messageTransporter(toptipValue.split(':')[0]);
 		};
-	};
-
-	const hndler = init();
-
-	watchEffect(() => hndler(sliderValue));
+	})
+	({
+		startTime: config.startTime,
+		endTime: config.endTime
+	}));
 
 	const sliderToipFormater = (value :number) => {
 		return sliderToipStr;
