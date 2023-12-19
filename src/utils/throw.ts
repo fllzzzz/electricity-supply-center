@@ -15,7 +15,7 @@ const createSender = <
 		) ? P :never
 	) {
 		setTimeout(() => {
-			fn.bind(this, ...args)();
+			fn.apply(this, args);
 		}, time);
 	};
 };
