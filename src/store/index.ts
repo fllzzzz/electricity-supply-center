@@ -23,12 +23,7 @@ import {
 		['智慧农业', 'Camer_Zihui'],
 	]);
 
-	export const useSyncer = (target :Ref<unknown>) => {
-		const isString = (x :Ref<unknown>) :x is Ref<string> => {
-			if(typeof x.value === 'string') return true;
-			return false;
-		};
-
+	export const useSyncer = () => {
 		let msg :any;
 
 		if(! store.model) {
@@ -42,7 +37,7 @@ import {
 			}
 		}
 
-		target.value = msg;
+		iframe.toUEMessage.value = msg;
 	};
 };
 

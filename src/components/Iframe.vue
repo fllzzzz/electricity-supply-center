@@ -79,10 +79,10 @@
 		elIframe.value.contentWindow &&
 		(window => {
 			MessageObserver.registObserver<(
-				(message :unknown) => void
+				(message :{value :unknown}) => void
 			)>(
 				message => window.postMessage(
-					message, getIframeSrc.value
+					message.value, getIframeSrc.value
 				), 'toUEScreen'
 			);
 		})

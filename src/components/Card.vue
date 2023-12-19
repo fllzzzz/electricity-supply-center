@@ -6,6 +6,7 @@
 		flex-flow: column nowrap;
 		justify-content: flex-start;
 		align-items: flex-start;
+		pointer-events: none;
 
 		.jx-card__item {
 			width: 100%;
@@ -31,7 +32,7 @@
 				background-image: url('@images/card-footer.png');
 				background-repeat: no-repeat;
 				background-size: 100.25% 100%;
-				background-position-y: -0.68px;
+				background-position-y: -1.75px;
 			}
 		}
 

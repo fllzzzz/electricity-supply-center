@@ -25,6 +25,14 @@
 </template>
 
 <script setup lang="ts">
+	import {
+		iframe
+	} from '@/store';
+
+	import {
+		onMounted
+	} from 'vue';
+
 	const imageList = [
 		{
 			img: require<string>('@images/光伏发电量.png'),
@@ -51,4 +59,10 @@
 			position: [3122, 1150]
 		},
 	];
+
+	onMounted(() => {
+		iframe.toUEMessage.value = {
+			ctid: 12611
+		};
+	});
 </script>

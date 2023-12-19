@@ -7,6 +7,7 @@
 		justify-content: space-between;
 		align-items: center;
 		position: auto;
+		pointer-events: none;
 	}
 
 	.light-simulation__wrapper {
@@ -28,6 +29,7 @@
 			flex: 1;
 			height: vw(20);
 			position: relative;
+			pointer-events: auto;
 		}
 		&#end-time {
 			margin-left: vw(14);
@@ -39,6 +41,15 @@
 			background-repeat: no-repeat;
 			background-size: 100% 100%;
 			background-image: url('@images/按钮底.png');
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			pointer-events: auto;
+			img {
+				width: vw(24);
+				height: vw(24);
+				object-fit: fill;
+			}
 		}
 	}
 
@@ -76,7 +87,7 @@
 		font-weight: 400 !important;
 		color: #FFFFFF !important;
 		line-height: 1 !important;
-		opacity: 0.5 !important;
+		/* opacity: 0.5 !important; */
 	}
 
 	.v-binder-follower-container {
@@ -109,39 +120,40 @@
 				<div class="light-simulation__wrapper" id="end-time">
 					<span>{{ config.endTime + ':00' }}</span>
 				</div>
-				<div class="light-simulation__wrapper" id="option"></div>
+				<div class="light-simulation__wrapper" id="option">
+					<img :src="playerManager.img.value"
+						@click="playerManager.clickHandler"
+					>
+				</div>
 			</div>
 		</template>
 	</Card>
 </template>
 <script setup lang="ts">
 	import useDebdounce from '@/utils/debounce';
+	import MessageObserver from '@/services/MessageObserver';
 
 	import Card from '@/components/Card.vue';
+
+	import {
+		iframe
+	} from '@/store';
 
 	import {
 		NSlider
 	} from 'naive-ui';
 
 	import {
-		ref,
+		ref,Ref,
 		reactive,
 		watchEffect,
-		Ref,
-		inject,
-		PropType
+		computed,
 	} from 'vue';
 
 	type Config = {
 		startTime :number;
 		endTime :number;
 	};
-
-	const props = defineProps({
-		ifRece: {
-			type: Object
-		}
-	});
 
 	const config = reactive<Partial<Config>>({
 		startTime: 6,
@@ -155,8 +167,53 @@
 	const sliderToipAwaysShow = ref(false);
 	const sliderValue = ref(0);
 	let sliderToipStr :string;
+
+	const playerManager = {
+		count: 0,
+		isPlayer: ref(false),
+		imgMap: new Map([
+			['play', require<string>('@images/播放.png')],
+			['pause', require<string>('@images/暂停.png')],
+		]),
+		get img() {
+			return computed(() => {
+				if(this.isPlayer.value) return this.imgMap.get('pause')!;
+				return this.imgMap.get('play')!;
+			});
+		},
+		interval: Math.ceil(10000 / 100),
+		repeatHandler() {
+			sliderValue.value ++;
+		},
+		timer: -1,
+		clickHandler() {
+			this.count++;
+			this.isPlayer.value = ! this.isPlayer.value;
+
+			if(this.isPlayer) {
+				sliderValue.value = 0;
+				sliderToipAwaysShow.value = ! sliderToipAwaysShow.value;
+				this.repeatHandler();
+				this.timer = setInterval(() => {
+					if(sliderValue.value >= 100) {
+						clearInterval(this.timer);
+						this.isPlayer.value = ! this.isPlayer.value;
+						sliderToipAwaysShow.value = ! sliderToipAwaysShow.value;
+						return;
+					}
+					this.repeatHandler();
+				}, this.interval); 
+			}else {
+				clearInterval(this.timer);
+				sliderValue.value = 0;
+			}
+		}
+	};
+
+
+
 	
-	watchEffect((() => {
+	const init = () => {
 		const lapse = Math.ceil(100 / 12);
 		let targetList :number[] = [];
 
@@ -173,45 +230,76 @@
 			}
 		}
 
-		return function() {
+		sliderToipStr = '06:00'
+		let flg10 = 0;
+
+		return function(sliderValue :Ref<number>) {
+			flg10++;
+
 			const index = targetList.indexOf(sliderValue.value);
+			
+			const autoHandler = () => {
+				if(index !== -1) {
+					sliderToipStr = `${config.startTime! + index +1}:00`;
+				}
+			};
 
-			if(index === -1) {
-				const maxList = 
-					targetList.filter(item => item > sliderValue.value);
-				const smallList =
-					targetList.filter(item => item < sliderValue.value);
-				
-				smallList.sort((a, b) => {
-					if(a > b) return -1;
-					if(a < b) return 1;
-					if(a === b) return 0;
-					return 0;
-				});
+			const clickHandler = () => {
+					if(index === -1) {
+					const maxList = 
+						targetList.filter(item => item > sliderValue.value);
+					const smallList =
+						targetList.filter(item => item < sliderValue.value);
+					
+					smallList.sort((a, b) => {
+						if(a > b) return -1;
+						if(a < b) return 1;
+						if(a === b) return 0;
+						return 0;
+					});
 
-				maxList.sort((a, b) => {
-					if(a > b) return 1;
-					if(a < b) return -1;
-					if(a === b) return 0;
-					return 0;
-				});
+					maxList.sort((a, b) => {
+						if(a > b) return 1;
+						if(a < b) return -1;
+						if(a === b) return 0;
+						return 0;
+					});
 
-				const maxNum = maxList[0];
-				const minNum = smallList[0];
+					const maxNum = maxList[0];
+					const minNum = smallList[0];
 
-				const maxDiff = Math.abs(maxNum - sliderValue.value);
-				const minddiff = Math.abs(minNum - sliderValue.value);
+					const maxDiff = Math.abs(maxNum - sliderValue.value);
+					const minddiff = Math.abs(minNum - sliderValue.value);
 
-				const target = maxDiff > minddiff ? maxNum : minNum;
+					const target = maxDiff > minddiff ? maxNum : minNum;
 
-				const _index = targetList.indexOf(target);
+					const _index = targetList.indexOf(target);
 
-				sliderToipStr = `${config.startTime! + _index +1}:00`;
-			}else {
-				sliderToipStr = `${config.startTime! + index +1}:00`;
+					sliderToipStr = `${config.startTime! + _index +1}:00`;
+				}else {
+					sliderToipStr = `${config.startTime! + index +1}:00`;
+				}
+			};
+
+			if(flg10 >= 2) {
+				if(playerManager.isPlayer.value) {
+					autoHandler();
+				}else {
+					clickHandler();
+				}
+
+				try {
+					
+				} catch (error) {
+					console.log('jx',error);
+				}
 			}
 		};
-	})());
+	};
+
+	const hndler = init();
+
+	watchEffect(() => hndler(sliderValue));
 
 	const sliderToipFormater = (value :number) => {
 		return sliderToipStr;

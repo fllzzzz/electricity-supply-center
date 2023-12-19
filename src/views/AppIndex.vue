@@ -3,8 +3,8 @@
 		position: fixed;
 		top: 0;left: 0;
 		z-index: 4000;
-		width: 3840px;
-		height: 2160px;
+		width: 100%;
+		height: 100%;
 	}
 </style>
 
@@ -15,7 +15,7 @@
 	<Iframe
 		class="UEScreen"
 		:config="{
-			src: 'https://bilibili.com'
+			src: 'http://192.168.1.114:18901'
 		}"
 	></Iframe>
 </template>

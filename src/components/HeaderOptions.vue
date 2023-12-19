@@ -122,8 +122,14 @@
 </template>
 
 <script setup lang="ts">
+	import MessageObserver from '@/services/MessageObserver';
+
 	import {
-		overview
+		UEScreenMessage
+	} from '@/types';
+
+	import {
+		overview,
 	} from '@/store';
 
 	import {
@@ -134,17 +140,14 @@
 	import {
 		ref,
 		onMounted,
-		onUnmounted,
 		computed,
-		inject,
-		Ref,
 		watchEffect,
 	} from 'vue';
+
 	const fontSize = 28;
 	const elSelect = ref<unknown>(undefined);
 	const selectContent = ref<string | undefined>(undefined);
 	let elInput :HTMLInputElement | undefined = undefined;
-	let resizeLock = 0;
 
 	const optionsList :string[] = [
 		'光伏区域',
@@ -159,10 +162,6 @@
 		['Camera_ChongDianzhuang', '充电桩'],
 		['Camer_Zihui', '智慧农业'],
 	]);
-
-	watchEffect(() => {
-
-	});
 
 	const firstClassHandler = (event :MouseEvent) => {
 		overview.store.model = undefined;
@@ -234,29 +233,20 @@
 	const selectChangeHandler = (
 		value :unknown
 	) => {
-		/* adapter(value as string, elInput!); */
-
 		overview.store.model = value as string;
+		overview.useSyncer();
 	};
 
-	const selectBoxInit = () => {
-		if(! elSelect.value) return;
+	MessageObserver.registObserver<(
+		(message :UEScreenMessage & {
+			areaid :string;
+		})  => void
+	)>(message => {
+		if(message.ctid !== 12521) return;
 
-		const {$el: el} = elSelect.value as {$el? :HTMLElement};
+		overview.store.model = modelMapR.get(message.areaid);
 
-		el && (function(el) {
-			elInput = el.querySelector('.el-input__inner') as HTMLInputElement;
-
-			elInput && (elInput => {
-				elInput.disabled = true;
-				elInput.readOnly = true;
-
-				selectContent.value = overview.store.model;
-
-				adapter(overview.store.model!, elInput);
-			})(elInput);
-		})(el)
-	};
+	}, 'toWebScreen');
 
 	onMounted(() => {
 		watchEffect(() => {
@@ -264,8 +254,6 @@
 				! overview.store.model ||
 				! elSelect.value
 			) return;
-
-			resizeLock = 1;
 
 			const {$el: el} = elSelect.value as {$el :HTMLElement};
 
@@ -279,9 +267,5 @@
 				})(elInput);
 			})(el)
 		});
-	});
-
-	onUnmounted(() => {
-		
 	});
 </script>

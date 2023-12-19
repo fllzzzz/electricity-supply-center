@@ -23,7 +23,12 @@
 
 <script setup lang="ts">
 	import {
-		onMounted, onUnmounted
+		iframe
+	} from '@/store';
+
+	import {
+		onMounted, 
+		onUnmounted
 	} from 'vue';
 
 	const image1 = require<string>('@images/底.png');
@@ -33,6 +38,9 @@
 
 	onMounted(() => {
 		elAppBody!.style.zIndex = '4500';
+		iframe.toUEMessage.value = {
+			ctid: 12611
+		};
 	});
 
 	onUnmounted(() => {

@@ -28,7 +28,8 @@
 
 <script setup lang="ts">
 	import {
-		overview
+		overview,
+		iframe
 	} from '@/store';
 
 	import {
@@ -70,7 +71,6 @@
 	]);
 
 	const getImageList = computed(() => {
-		console.log('==jx, modleName: ', overview.store.model);
 		const mapName = modelNameMap.get(overview.store.model as string);
 
 		const targetKey = Object.keys(imageGroup)
@@ -78,6 +78,12 @@
 
 		if(targetKey) return imageGroup[targetKey as keyof typeof imageGroup];
 		return imageGroup.default;
+	});
+
+	onMounted(() => {
+		iframe.toUEMessage.value = {
+			ctid: 10111
+		};
 	});
 
 	onUnmounted(() => {

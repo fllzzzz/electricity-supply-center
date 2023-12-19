@@ -25,7 +25,13 @@
 	import VideoBox from '@/components/VideoBox.vue';
 
 	import {
+		iframe
+	} from '@/store';
+
+	import {
 		ref,
+		onMounted,
+		onUnmounted
 	} from 'vue';
 
 	const videoBoxState = ref(true);
@@ -33,4 +39,19 @@
 	const closeHandler = () => {
 		videoBoxState.value = false;
 	};
+
+
+	onMounted(() => {
+		iframe.toUEMessage.value = {
+			ctid: 12911,
+			state: 'open'
+		};
+	});
+
+	onUnmounted(() => {
+		iframe.toUEMessage.value = {
+			ctid: 12911,
+			state: 'close'
+		};
+	});
 </script>
