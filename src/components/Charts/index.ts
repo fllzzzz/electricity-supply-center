@@ -1,6 +1,6 @@
 import * as echarts from 'echarts/core';
 
-import useDebdounce from '@/utils/debounce';
+import debdounce from "@/utils/debounce";
 
 import {
 	onMounted
@@ -12,13 +12,7 @@ export const useReszieObserver = (
 	echartsInstance :echarts.ECharts,
 	time :number
 ) => {
-	if(! observer) {
-		observer = new ResizeObserver(
-			useDebdounce<ResizeObserver,() => void>(
-				() => echartsInstance.resize(), time
-			)
-		);
-	}
+
 
 	observer?.observe(echartsInstance.getDom());
 };

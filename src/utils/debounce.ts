@@ -1,30 +1,42 @@
-const useDebdounce = <T, F extends ((...args :any[]) => void)>(
-	fn :F,
+const debdounce = <
+	F extends ((...args: any[]) => void | Promise<boolean>),
+	T=unknown
+>(
+	fn: F,
 	time: number
 ) => {
-	let firstBootFlg :0 | 1 = 1;
-	let delayTimer :number | undefined;
+	let _timer :number | undefined;
 
-	return function(
-		this :T,
-		...args :F extends ((...args :infer P) => void) ? P : never
-	){
-		if(firstBootFlg === 1) {
-			fn.bind(this, ...args)();
-			firstBootFlg = 0;
-		}else if(firstBootFlg === 0) {
-			clearTimeout(delayTimer);
-			delayTimer = setTimeout(
-				() => {
-					fn.bind(this, ...args)();
-					firstBootFlg = 1;
-				},
-				time
-			);
+	const isAsyncFn = (
+		x :void | Promise<boolean>
+	) :x is Promise<boolean> =>   {
+		if(x && 'then' in x) return true;
+		return false;
+	}
+
+	return function (
+		this: T,
+		...args: F extends ((...args: infer P) => void) ? P : never
+	) {
+		if(! _timer) {
+			fn.apply(this, args);
+			_timer = -1;
+			return;
 		}else {
-			throw new Error('error: firstBootFlg');
+			clearTimeout(_timer);
 		}
+
+		_timer = setTimeout(() => {
+			const result = fn.apply(this, args);
+			if(isAsyncFn(result)) {
+				result.then(
+					state => state ? _timer = undefined : ''
+				);
+			}else {
+				_timer = undefined;
+			}
+		},time);
 	};
 };
 
-export default useDebdounce;
+export default debdounce;

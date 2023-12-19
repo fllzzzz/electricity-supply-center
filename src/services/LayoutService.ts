@@ -1,4 +1,4 @@
-import useDebdounce from "@/utils/debounce";
+import debdounce from "@/utils/debounce";
 
 export default class LayoutService {
 	protected element;
@@ -27,13 +27,12 @@ export default class LayoutService {
 		let observer = LayoutService.observerMap.get(time);
 
 		if(! observer) {
-			observer = new ResizeObserver(
-				useDebdounce<ResizeObserver, (
+			observer = new ResizeObserver(debdounce<
+				((
 					entryList :ResizeObserverEntry[],
 					observer :ResizeObserver
-				) => void>((
-					entryList, observer
-				) => {
+				) => void), ResizeObserver
+			>((entryList, observer) => {
 					for(const entry of entryList) {
 						const {inlineSize, blockSize} = entry.borderBoxSize[0];
 

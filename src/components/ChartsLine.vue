@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-	import useDebdounce from '@/utils/debounce';
+	import debdounce from '@/utils/debounce';
 	import * as echarts from 'echarts';
 
 	import {
@@ -146,10 +146,12 @@
 
 			charts.setOption(options);
 
-			new ResizeObserver(useDebdounce<ResizeObserver, (
-				entryList :ResizeObserverEntry[],
-				observer :ResizeObserver
-			) => void>((entryList, observer) => {
+			new ResizeObserver(debdounce<
+				((
+					entryList :ResizeObserverEntry[],
+					observer :ResizeObserver
+				) => void), ResizeObserver
+			>((entryList, observer) => {
 				charts?.resize();
 			}, 20)).observe(el);
 		})(elChartsWrapper.value);
