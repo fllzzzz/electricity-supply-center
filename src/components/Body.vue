@@ -10,27 +10,9 @@
 			width: 100vw;
 			height: 100vh;
 			position: relative;
-			.demo-btn-group {
+			& > * {
+				z-index: 6000;
 				pointer-events: auto;
-				position: absolute;
-				top: 50%;left: 50%;
-				transform: translate(-50%, -50%);
-				width: 600px;
-				height: 500px;
-				border: 4px dotted red;
-				display: flex;
-				flex-flow: column nowrap;
-				justify-content: flex-start;
-				align-items: center;
-				button {
-					width: 200px;
-					height: 80px;
-					background-color: black;
-					span {
-						color: aliceblue;
-						font-size: 26px;
-					}
-				}
 			}
 		}
 	}
@@ -47,11 +29,6 @@
 					:message="message"
 				/>
 			</RouterView>
-<!-- 			<div class="demo-btn-group">
-				<button id="guangfu"
-					@click="message = 'guangfu'"
-				><span>光伏</span></button>
-			</div> -->
 		</div>
 	</div>
 </template>

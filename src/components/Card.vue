@@ -6,7 +6,6 @@
 		flex-flow: column nowrap;
 		justify-content: flex-start;
 		align-items: flex-start;
-		pointer-events: none;
 
 		.jx-card__item {
 			width: 100%;
@@ -55,7 +54,8 @@
 </style>
 
 <template>
-	<div class="jx-card">
+	<div class="jx-card"
+	>
 		<div class="jx-card__item" id="header">
 			<div class="header-wrapper" id="title">
 				<span>{{ props.config?.title }}</span>

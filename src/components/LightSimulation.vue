@@ -7,7 +7,6 @@
 		justify-content: space-between;
 		align-items: center;
 		position: auto;
-		pointer-events: none;
 	}
 
 	.light-simulation__wrapper {
@@ -29,7 +28,6 @@
 			flex: 1;
 			height: vw(20);
 			position: relative;
-			pointer-events: auto;
 		}
 		&#end-time {
 			margin-left: vw(14);
@@ -44,7 +42,6 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			pointer-events: auto;
 			img {
 				width: vw(24);
 				height: vw(24);
@@ -154,8 +151,8 @@
 	};
 
 	const config = reactive<Config>({
-		startTime: 1,
-		endTime: 4
+		startTime: 6,
+		endTime: 18
 	});
 
 	const sliderStyle = {
@@ -317,11 +314,11 @@
 					
 					const _index = target.indexOf(_target);
 
-					_result = `${startTime + _index}:00`;
+					_result = `${startTime + _index + 1}:00`;
 
 					return _result;
 				} else if(index >= 0) {
-					_result = `${startTime + index}:00`;
+					_result = `${startTime + index + 1}:00`;
 
 					return _result;
 				}else {
@@ -343,7 +340,7 @@
 		startTime: config.startTime,
 		endTime: config.endTime
 	}, value => {
-		messageTransporter(value.split(':')[0]);
+		messageTransporter(value.split(':')[0]);messageTransporter(value.split(':')[0]);
 
 		return value;
 	});
