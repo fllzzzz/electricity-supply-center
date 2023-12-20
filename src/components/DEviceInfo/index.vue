@@ -1,37 +1,50 @@
 <style lang="scss" scoped>
 	.device-info {
+		width: 100%;
+		height: 100%;
+		padding-left: vw(38);
 
-		.device-info__wrapper {
-			height: vw(304);
+		&__wrapper {
+			width: 100%;
+			height: 100%;
 			display: flex;
 			flex-flow: row wrap;
+			justify-content: space-between;
+			align-items: center;
 		}
 
-		.device-info__item {
+		&__wrapper__item {
+			max-width: 50%;
+			min-width: vw(298);
+			overflow: hidden;
 			height: vw(129);
-			margin-bottom: vw(50);
-			&:nth-child(2n-1) {
-				margin-right: vw(39);
-			}
-			&:nth-last-child(1),
-			&:nth-last-child(2) {
-				margin-bottom: unset;
-			}
+			display: flex;
+			flex-flow: row nowrap;
+			justify-content: flex-start;
+			align-items: center;
 		}
 
-		.device-info__item__left-sider {
-			width: vw(120);
-			height: vw(120);
+		&__wrapper__item__left-side {
 			img {
-				width: 100%;height: 100%;
+				width: vw(120);
+				height: vw(120);
+				margin-right: vw(17);
 				object-fit: fill;
 			}
 		}
-		.device-info__item__right-sider {
+
+		&__wrapper__item__right-side {
+			height: 100%;
 			display: flex;
 			flex-flow: column nowrap;
 			justify-content: space-between;
 			align-items: flex-start;
+			.row {
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: flex-start;
+				align-items: center;
+			}
 			span {
 				line-height: 1;
 				&#name {
@@ -42,6 +55,7 @@
 					color: #FFFFFF;
 				}
 				&#title {
+					width: vw(48);
 					height: vw(22);
 					font-size: vw(24);
 					font-family: Source Han Sans CN;
@@ -50,7 +64,7 @@
 					opacity: 0.8;
 				}
 				&#value {
-					height: vw(28);
+					height: vw(34);
 					font-size: vw(36);
 					font-family: DIN;
 					font-weight: bold;
@@ -59,7 +73,7 @@
 					margin-right: vw(15);
 				}
 				&#util {
-					height: vw(18);
+					height: vw(16);
 					font-size: vw(20);
 					font-family: Source Han Sans CN;
 					font-weight: 400;
@@ -78,22 +92,24 @@
 			title: '设备构成'
 		}"
 	>
-		<div class="device-info">
+		<div class="device-info"
+		>
 			<div class="device-info__wrapper">
 				<template
 					v-for="(item, index) in config"
 					:key="index"
 				>
-					<div class="device-info__item">
-						<div class="device-info__item__left-sider">
+					<div class="device-info__wrapper__item">
+						<div class="device-info__wrapper__item__left-side">
 							<img :src="item.image">
 						</div>
-						<div class="device-info__item__right-sider">
+						<div class="device-info__wrapper__item__right-side">
 							<div class="row">
 								<span id="name">{{ item.name }}</span>
 							</div>
 							<template
 								v-for="(value, index) in item.value"
+								:key="index"
 							>
 								<div class="row">
 									<span id="title">{{ value[0] }}</span>
@@ -111,43 +127,5 @@
 
 <script setup lang="ts">
 	import Card from '@/components/Card.vue';
-
-	import {
-		reactive
-	} from 'vue';
-
-	const config = reactive([
-		{
-			name: '智慧光伏',
-			value: [
-				['面积', 354, '㎡'],
-				['数量', 4, '组'],
-			],
-			image: require<string>('@images/光伏.png'),
-		},
-		{
-			name: '移动储能',
-			value: [
-				['面积', 36, '㎡'],
-				['数量', 1, '台'],
-			],
-			image: require<string>('@images/移动储能.png'),
-		},
-		{
-			name: '充电桩',
-			value: [
-				['面积', 239, '㎡'],
-				['数量', 19, '台'],
-			],
-			image: require<string>('@images/充电桩.png'),
-		},
-		{
-			name: '智慧大棚',
-			value: [
-				['面积', 50, '㎡'],
-				['数量', 1, '个'],
-			],
-			image: require<string>('@images/智慧大棚.png'),
-		},
-	]);
+	import config from './config';
 </script>

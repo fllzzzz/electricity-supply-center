@@ -57,7 +57,7 @@
 				position: [3122, 800],
 				size: [684, 492],
 				instance: defineAsyncComponent(
-					() => import('@/components/DEviceInfo/index.vue')
+					() => import('@/components/DeviceInfo/index.vue')
 					
 					/* () => import('@/components/LightSimulation.vue') */
 				)

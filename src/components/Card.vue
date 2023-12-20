@@ -38,7 +38,7 @@
 		.header-wrapper {
 			&#title {
 				margin-left: vw(19);
-				margin-top: rem(18);
+				margin-top: rem(12);
 				span {
 					height: vw(38);
 					font-size:vw(40);
