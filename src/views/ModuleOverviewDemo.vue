@@ -54,12 +54,15 @@
 	}= {
 		default: [
 			{
-				position: [3122, 800],
-				size: [684, 492],
+				position: [3122, 198],
+				size: [684, 428],
 				instance: defineAsyncComponent(
-					() => import('@/components/DeviceInfo/index.vue')
+					() => import('@/components/ElectricityUsageOfDay.vue')
 					
 					/* () => import('@/components/LightSimulation.vue') */
+					/* () => import('@/components/DeviceInfo/index.vue') */
+					/* () => import('@/components/EmphasisMonitor.vue') */
+					/* () => import('@/components/ElectricityUsage.vue') */
 				)
 			},
 		],

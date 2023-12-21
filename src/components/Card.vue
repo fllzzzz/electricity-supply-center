@@ -25,6 +25,7 @@
 				justify-content: center;
 				align-items: center;
 				background-color: rgba(2, 29, 32, 0.58);
+				position: relative;
 			}
 			&#footer {
 				height: vw(22);
