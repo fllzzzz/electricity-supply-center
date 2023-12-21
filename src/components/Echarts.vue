@@ -31,12 +31,12 @@
 	} from 'echarts';
 
 	type EChartsExtensions = 
-		typeof echarts.use extends 
-		((...args :infer P) => void) ? P : never;
+		(typeof echarts.use extends 
+		((...args :infer P) => void) ? P : never)[0];
 
 	type Config = {
 		chartsOptions :unknown;
-		use :EChartsExtensions[0]
+		chartsUseList :EChartsExtensions;
 	};
 
 	const props = defineProps({
@@ -92,10 +92,12 @@
 			};
 
 			if(isEchartOption(props.config.chartsOptions)) {
-				echarts.use(props.config.use);
+				echarts.use(props.config.chartsUseList);
 
 				instance = echarts.init(elWrapper);
 				instance.setOption(props.config.chartsOptions);
+			}else {
+				throw new Error('@charts.vue => the config is not EchartOptions');
 			}
 
 			observer.observe(elWrapper);
@@ -104,5 +106,6 @@
 
 	onUnmounted(() => {
 		observer && observer.disconnect();
+		instance && instance.dispose();
 	});
 </script>

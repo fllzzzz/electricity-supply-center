@@ -1,7 +1,8 @@
 <style lang="scss" scoped>
 	.container {
-		width: 500px;
-		height: 300px;
+		width: 800px;
+		height: 600px;
+		border: 2px dotted red;
 	}
 </style>
 

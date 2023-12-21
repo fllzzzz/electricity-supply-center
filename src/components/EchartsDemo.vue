@@ -5,40 +5,46 @@
 <template>
 	<Echarts
 		:config="{
-			chartsOptions: options, use
+			chartsOptions: options, 
+			chartsUseList: useList
 		}"
 	></Echarts>
 </template>
 
 <script setup lang="ts">
+	import * as echarts from 'echarts';
 	import Echarts from '@/components/Echarts.vue';
 
 	import {
-		PieChart
+		CustomChart,
+		PieChart,
+		BarChart,
 	} from 'echarts/charts';
 
 	import {
-		TitleComponent,
-		TooltipComponent,
-		LegendComponent,
+		DatasetComponent,
+		GridComponent,
 	} from 'echarts/components';
 
 	import {
-		CanvasRenderer
+		SVGRenderer,
 	} from 'echarts/renderers';
+
+	import { LabelLayout, UniversalTransition } from 'echarts/features';
 
 	import {
 		reactive
 	} from 'vue';
 
 	import type {
-		PieSeriesOption
+		CustomSeriesOption,
+		PieSeriesOption,
+		BarSeriesOption
 	} from 'echarts/charts';
 
-	import type {
-		TitleComponentOption,
-		ToolboxComponentOption,
-		LegendComponentOption
+	import type{
+		DatasetComponentOption,
+		GridComponentOption
 	} from 'echarts/components';
 
 	import type {
@@ -47,53 +53,83 @@
 
 
 	type ECOption = ComposeOption<
+		| CustomSeriesOption
+		| DatasetComponentOption
 		| PieSeriesOption
-		| TitleComponentOption
-		| ToolboxComponentOption
-		| LegendComponentOption
+		| GridComponentOption
+		| BarSeriesOption
 	>;
 
 	const options :ECOption = {
-		title: {
-			text: 'Referer of a Website',
-			subtext: 'Fake Data',
-			left: 'center'
+		dataset: {
+			sourceHeader: true,
+			source: [
+				['item1', 'item2', 'item3'],
+				[10, 		20,			30],
+				[40,		50,			60],
+				[70,		80,			90],
+			]
 		},
-		tooltip: {
-			trigger: 'item'
+		grid: {
+			containLabel: true,
+			top: 0,
+			right: 0,
+			bottom: 0,
+			left: 0,
 		},
-		legend: {
-			orient: 'vertical',
-			left: 'left'
+		xAxis: {
+			axisLabel: {
+				align: 'right',
+			}
 		},
+		yAxis: {},
 		series: [
 			{
-			name: 'Access From',
-			type: 'pie',
-			radius: '50%',
-			data: [
-				{ value: 1048, name: 'Search Engine' },
-				{ value: 735, name: 'Direct' },
-				{ value: 580, name: 'Email' },
-				{ value: 484, name: 'Union Ads' },
-				{ value: 300, name: 'Video Ads' }
-			],
-			emphasis: {
-				itemStyle: {
-				shadowBlur: 10,
-				shadowOffsetX: 0,
-				shadowColor: 'rgba(0, 0, 0, 0.5)'
+				type: 'custom',
+				coordinateSystem: 'cartesian2d',
+				encode: {
+					value: 0
+				},
+				renderItem: (params, api) => {
+					const [
+						Ox, Oy, x, y,
+					] = [
+						...api.coord([0, 0]),
+						...api.coord([api.value(0), api.value(1)])
+					];
+					
+					console.log(Ox, Oy, x, y);
+
+					return {
+						type:'path',
+						style: {
+							stroke: 'red',
+							fill: 'red'
+						},
+						shape: {
+							d: `
+							M ${x}, ${y}
+							L ${x}, ${Oy}
+							M ${x}, ${y}
+							L ${x + 50}, ${y}
+							L ${x + 50}, ${Oy}
+							L ${x}, ${Oy}
+							`,
+						}
+					}
 				}
-			}
 			}
 		]
 	}
 
-	const use = [
+	const useList = [
+		CustomChart,
+		DatasetComponent,
+		SVGRenderer,
 		PieChart,
-		TitleComponent,
-		TooltipComponent,
-		LegendComponent,
-		CanvasRenderer
+		GridComponent,
+		BarChart,
+		LabelLayout,
+		UniversalTransition
 	];
 </script>
