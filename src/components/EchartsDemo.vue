@@ -12,13 +12,13 @@
 </template>
 
 <script setup lang="ts">
-	import * as echarts from 'echarts';
 	import Echarts from '@/components/Echarts.vue';
 
 	import {
 		CustomChart,
 		PieChart,
 		BarChart,
+		LineChart
 	} from 'echarts/charts';
 
 	import {
@@ -30,16 +30,19 @@
 		SVGRenderer,
 	} from 'echarts/renderers';
 
-	import { LabelLayout, UniversalTransition } from 'echarts/features';
-
 	import {
 		reactive
 	} from 'vue';
 
 	import type {
+		PropType
+	} from 'vue';
+
+	import type {
 		CustomSeriesOption,
 		PieSeriesOption,
-		BarSeriesOption
+		BarSeriesOption,
+		LineSeriesOption
 	} from 'echarts/charts';
 
 	import type{
@@ -47,10 +50,9 @@
 		GridComponentOption
 	} from 'echarts/components';
 
-	import type {
-		ComposeOption
+	import {
+		type ComposeOption
 	} from 'echarts/core';
-
 
 	type ECOption = ComposeOption<
 		| CustomSeriesOption
@@ -58,16 +60,28 @@
 		| PieSeriesOption
 		| GridComponentOption
 		| BarSeriesOption
+		| LineSeriesOption
 	>;
+
+	type Config = {
+		data :(string | number)[][],
+	};
+
+	const props = defineProps({
+		config: {
+			type: Object as PropType<Config>
+		}
+	});
 
 	const options :ECOption = {
 		dataset: {
 			sourceHeader: true,
-			source: [
-				['item1', 'item2', 'item3'],
-				[10, 		20,			30],
-				[40,		50,			60],
-				[70,		80,			90],
+			source: props.config?.data ? props.config?.data : [
+				['item1', 'item2'],
+				[2, 	10],
+				[4,		20],
+				[6,		30],
+				[8,		40],
 			]
 		},
 		grid: {
@@ -78,42 +92,93 @@
 			left: 0,
 		},
 		xAxis: {
+			type: 'category',
 			axisLabel: {
-				align: 'right',
-			}
+				formatter(value, index) {
+					if(index === 0) return '';
+					return `${value}时`
+				},
+			},
+			axisTick: {
+				show: false
+			},
+			axisLine: {
+				show: true
+			},
+
 		},
-		yAxis: {},
+		yAxis: {
+			
+		},
 		series: [
 			{
 				type: 'custom',
 				coordinateSystem: 'cartesian2d',
 				encode: {
-					value: 0
+					x: 0,
+					y: 1
 				},
 				renderItem: (params, api) => {
+					const dimensionY = params.encode.y[0];
 					const [
 						Ox, Oy, x, y,
 					] = [
 						...api.coord([0, 0]),
 						...api.coord([api.value(0), api.value(1)])
 					];
-					
-					console.log(Ox, Oy, x, y);
+
+					const yAxisMaxValue = props.config?.data
+						.slice(1).map(row => {
+							if(dimensionY >= row.length) 
+								throw new Error('the dimension out of array length')
+						
+							return row[dimensionY];
+						}).sort((a, b) => {
+							if(
+								typeof a === 'string' ||
+								typeof b === 'string'
+							) return 0;
+
+							return a > b ? -1 : 1;
+						})[0];
+
+					if(
+						! yAxisMaxValue ||
+						typeof yAxisMaxValue !== 'number'
+					) throw new Error('yAxisMaxValue is unknown error')
+
+					const yAxisMaxPoint = api.coord([0, yAxisMaxValue]);
+
+					if(y >= yAxisMaxPoint[1] / 2) {
+						// 下方，未超过一半
+
+					}else {
+
+					}
+
 
 					return {
-						type:'path',
+						type: 'path',
 						style: {
-							stroke: 'red',
-							fill: 'red'
+							stroke: 'rgba(248, 181, 81, 1)',
+							fill: 'rgba(248, 181, 81, 0.3)',
 						},
 						shape: {
 							d: `
-							M ${x}, ${y}
-							L ${x}, ${Oy}
-							M ${x}, ${y}
-							L ${x + 50}, ${y}
-							L ${x + 50}, ${Oy}
-							L ${x}, ${Oy}
+								M	
+									${x - 100} ${Oy}
+
+								C
+									${x - 100} ${Oy},
+									${x} ${Oy},
+									${x} ${y},
+
+								C
+									${x} ${Oy},
+									${x + 100} ${Oy},
+									${x + 100} ${Oy}
+
+								Z
 							`,
 						}
 					}
@@ -129,7 +194,7 @@
 		PieChart,
 		GridComponent,
 		BarChart,
-		LabelLayout,
-		UniversalTransition
+		LineChart,
 	];
+
 </script>

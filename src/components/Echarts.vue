@@ -1,5 +1,6 @@
 <style lang="scss" scoped>
 	.app-charts {
+		display: flex;
 		width: 100%;
 		height: 100%;
 		&__wrapper {
