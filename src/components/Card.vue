@@ -32,7 +32,7 @@
 				background-image: url('@images/card-footer.png');
 				background-repeat: no-repeat;
 				background-size: 100.25% 100%;
-				background-position-y: -1.75px;
+				background-position-y: vw(-5);
 			}
 		}
 

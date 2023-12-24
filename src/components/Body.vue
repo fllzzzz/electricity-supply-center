@@ -26,7 +26,6 @@
 			>
 				<component
 					:is="Component"
-					:message="message"
 				/>
 			</RouterView>
 		</div>
@@ -38,6 +37,4 @@
 		ref,
 		reactive		
 	} from 'vue';
-
-	const message = ref('');
 </script>

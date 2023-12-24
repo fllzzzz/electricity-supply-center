@@ -3,6 +3,8 @@
 		width: 100%;
 		height: 100%;
 		padding: vw(4) vw(4) 0 vw(4);
+		position: absolute;
+		top: vw(-10);
 
 		&__wrapper {
 			width: 100%;
@@ -14,15 +16,15 @@
 		}
 
 		&__wrapper__item {
-			height: vw(219);
+			height: vw(222);
 			max-width: 50%;
 			min-width: vw(334);
-			overflow: hidden;
+			/* overflow: hidden; */
 			display: flex;
 			flex-flow: column nowrap;
 			justify-content: space-between;
 			align-items: flex-start;
-			margin-bottom: vw(9);
+			margin-bottom: vw(4);
 			&:nth-last-child(1),
 			&:nth-last-child(2) {
 				margin-bottom: unset;

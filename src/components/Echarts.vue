@@ -16,30 +16,40 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="
+	T  extends
+	keyof RemoveIndex<T> extends
+	keyof RemoveIndex<EChartsOption> ? unknown : never
+">
 	import debdounce from '@/utils/debounce';
 	import * as echarts from 'echarts/core';
 
 	import {
 		PropType,
 		ref,
+		watchEffect,
 		onMounted,
 		onUnmounted
 	} from 'vue';
 
 	import type {
-		EChartsOption
+		EChartsOption,
 	} from 'echarts';
+
+	import type {
+		RemoveIndex
+	} from '@/types';
 
 	type EChartsExtensions = 
 		(typeof echarts.use extends 
 		((...args :infer P) => void) ? P : never)[0];
 
 	type Config = {
-		chartsOptions :unknown;
+		chartsOptions :T;
 		chartsUseList :EChartsExtensions;
 	};
 
+	const emits = defineEmits(['rezise']);
 	const props = defineProps({
 		config: {
 			type: Object as PropType<Config>,
@@ -65,22 +75,14 @@
 				return;
 			}
 
+			emits('rezise');
+
 			const _instance = 
 				echarts.getInstanceByDom(entry.target as HTMLElement);
 
 			_instance && _instance.resize();
 		}
 	}, 20));
-
-	
-	const isEchartOption = (x :unknown) :x is EChartsOption => {
-		if(
-			x &&
-			typeof x  === 'object' &&
-			'series' in x
-		) return true;
-		return false;
-	};
 
 	onMounted(() => {
 		elCharts.value &&
@@ -92,14 +94,14 @@
 				throw new Error('@charts.vue => wrapper is not fond');
 			};
 
-			if(isEchartOption(props.config.chartsOptions)) {
-				echarts.use(props.config.chartsUseList);
+			watchEffect(() => {
+				if(! instance) {
+					echarts.use(props.config.chartsUseList);
+					instance = echarts.init(elWrapper);
+				}
 
-				instance = echarts.init(elWrapper);
-				instance.setOption(props.config.chartsOptions);
-			}else {
-				throw new Error('@charts.vue => the config is not EchartOptions');
-			}
+				instance.setOption(props.config.chartsOptions as EChartsOption);
+			});
 
 			observer.observe(elWrapper);
 		})(elCharts.value);
