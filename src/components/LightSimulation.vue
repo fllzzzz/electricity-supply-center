@@ -97,7 +97,8 @@
 	<Card
 		id="light-simulation"
 		:config="{
-			title: '光照模拟'
+			title: '光照模拟',
+			disableLeftIcon: true
 		}"
 	>
 		<template #default>
@@ -340,7 +341,7 @@
 		startTime: config.startTime,
 		endTime: config.endTime
 	}, value => {
-		messageTransporter(value.split(':')[0]);messageTransporter(value.split(':')[0]);
+		messageTransporter(value.split(':')[0]);
 
 		return value;
 	});

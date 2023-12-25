@@ -26,6 +26,13 @@
 				align-items: center;
 				background-color: rgba(2, 29, 32, 0.58);
 				position: relative;
+				img#left-icon {
+					width: vw(14);
+					height: vw(298);
+					position: absolute;
+					left: 0;top: 50%;
+					transform: translateY(-50%);
+				}
 			}
 			&#footer {
 				height: vw(22);
@@ -63,6 +70,11 @@
 			</div>
 		</div>
 		<div class="jx-card__item" id="body">
+			<template
+				v-if="! $props.config?.disableLeftIcon"
+			>
+				<img src="@images/中部.png" id="left-icon">
+			</template>
 			<slot name="default"></slot>
 		</div>
 		<div class="jx-card__item" id="footer"></div>
@@ -76,6 +88,7 @@
 
 	type Config = {
 		title :string;
+		disableLeftIcon? :boolean;
 	};
 
 	const props = defineProps({

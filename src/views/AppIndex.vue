@@ -12,12 +12,12 @@
 	<Header></Header>
 	<Body></Body>
 	<Footer></Footer>
-<!-- 	<Iframe
+	<Iframe
 		class="UEScreen"
 		:config="{
 			src: 'http://192.168.1.114:18901'
 		}"
-	></Iframe> -->
+	></Iframe>
 </template>
 
 <script setup lang="ts">

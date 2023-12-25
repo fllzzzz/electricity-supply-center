@@ -3,6 +3,11 @@
 		position: absolute;
 		pointer-events: auto;
 		z-index: 6000;
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: fill;
+		}
 	}
 </style>
 
@@ -17,7 +22,16 @@
 				left: (item.position[0] / 3840 * 100).toString() + 'vw',
 				top: (item.position[1] / 3840 * 100).toString() + 'vw',
 			}">
-			<component :is="item.instance"></component>
+			<template
+				v-if="typeof item.instance === 'string'"
+			>
+				<img :src="item.instance">
+			</template>
+			<template
+				v-else
+			>
+				<component :is="item.instance"></component>
+			</template>
 		</div>
 	</template>
 </template>
@@ -61,14 +75,14 @@
 	}= {
 		default: [
 			{
-				position: [31, 197],
+				position: [32, 197],
 				size: [684, 488],
 				instance: defineAsyncComponent(
 					() => import('@/components/SpaceOverview.vue')
 				)
 			},
 			{
-				position: [31, 724],
+				position: [32, 724],
 				size: [684, 486],
 				instance: defineAsyncComponent(
 					() => import('@/components/DeviceInfo.vue')
@@ -87,6 +101,133 @@
 				instance: defineAsyncComponent(
 					() => import('@/components/EmphasisMonitor.vue')
 				)
+			},
+		],
+		photovoltaic: [
+			{
+				position: [32, 192],
+				size: [686, 730],
+				instance: defineAsyncComponent(
+					() => import('@/components/PhotovoltaicElectricalEnergy.vue')
+				)
+			},
+			{
+				position: [32, 954],
+				size: [686, 428],
+				instance: require<string>('@images/单日电量.png')
+			},
+			{
+				position: [32, 1412],
+				size: [686, 532],
+				instance: require<string>('@images/光照强度.png')
+			},
+			{
+				position: [3122, 192],
+				size: [686, 715],
+				instance: require<string>('@images/上网统计.png')
+			},
+			{
+				position: [3122, 945],
+				size: [686, 751],
+				instance: require<string>('@images/收益数据.png')
+			},
+			{
+				position: [3122, 1728],
+				size: [686, 223],
+				instance: defineAsyncComponent(
+					() => import('@/components/LightSimulation.vue')
+				)
+			},
+		],
+		energyStorage: [
+			{
+				position: [32, 192],
+				size: [686, 428],
+				instance: require<string>('@images/电池电量.png')
+			},
+			{
+				position: [32, 652],
+				size: [686, 730],
+				instance: require<string>('@images/电池电量百分比.png')
+			},
+			{
+				position: [32, 1414],
+				size: [686, 530],
+				instance: require<string>('@images/功率.png')
+			},
+			{
+				position: [3122, 192],
+				size: [686, 584],
+				instance: require<string>('@images/充放电次数.png')
+			},
+			{
+				position: [3122, 808],
+				size: [686, 510],
+				instance: require<string>('@images/储能寿命.png')
+			},
+			{
+				position: [3122, 1350],
+				size: [686, 594],
+				instance: require<string>('@images/电池温度监控.png')
+			},
+		],
+		chargingPost: [
+			{
+				position: [32, 194],
+				size: [686, 1366],
+				instance: require<string>('@images/充电桩用电量.png')
+			},
+			{
+				position: [32, 1562],
+				size: [686, 352],
+				instance: require<string>('@images/充电次数.png')
+			},
+			{
+				position: [3122, 191],
+				size: [686, 340],
+				instance: require<string>('@images/充电时长.png')
+			},
+			{
+				position: [3122, 563],
+				size: [686, 760],
+				instance: require<string>('@images/充电桩收益.png')
+			},
+			{
+				position: [3122, 1350],
+				size: [686, 594],
+				instance: require<string>('@images/充电桩铭牌.png')
+			},
+		],
+		agriculture: [
+			{
+				position: [32, 194],
+				size: [686, 418],
+				instance: require<string>('@images/传感器数据.png')
+			},
+			{
+				position: [32, 644],
+				size: [686, 730],
+				instance: require<string>('@images/光伏总发电量.png')
+			},
+			{
+				position: [32, 1406],
+				size: [686, 428],
+				instance: require<string>('@images/光伏单日发电量.png')
+			},
+			{
+				position: [3122, 192],
+				size: [686, 637],
+				instance: require<string>('@images/灌溉次数-时长.png')
+			},
+			{
+				position: [3122, 861],
+				size: [686, 547],
+				instance: require<string>('@images/灌溉用水量.png')
+			},
+			{
+				position: [3122, 1440],
+				size: [686, 504],
+				instance: require<string>('@images/智慧农业桩铭牌.png')
 			},
 		],
 	}

@@ -70,7 +70,8 @@
 	<Card
 		id="emphasis-monitor"
 		:config="{
-			title: '重点监控'
+			title: '重点监控',
+			disableLeftIcon: true
 		}"
 	>
 		<div class="emphasis-monitor">

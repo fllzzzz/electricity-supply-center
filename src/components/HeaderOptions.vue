@@ -238,13 +238,13 @@
 	};
 
 	MessageObserver.registObserver<(
-		(message :UEScreenMessage & {
-			areaid :string;
+		(message :{
+			value :UEScreenMessage & {areaid :string;}
 		})  => void
 	)>(message => {
-		if(message.ctid !== 12521) return;
+		if(message.value.ctid !== 12521) return;
 
-		overview.store.model = modelMapR.get(message.areaid);
+		overview.store.model = modelMapR.get(message.value.areaid);
 
 	}, 'toWebScreen');
 
