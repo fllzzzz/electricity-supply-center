@@ -2,15 +2,19 @@
 	.container {
 		width: vw(684);
 		height: vw(488);
+		border: 4px dotted red;
+		position: relative;
 	}
 </style>
 
 <template>
-	<div class="container">
-		<SpaceOverview></SpaceOverview>
-	</div>
+	<video class="container">
+		dsads
+	</video>
 </template>
 
 <script setup lang="ts">
-	import SpaceOverview from '@/components/SpaceOverview.vue';
+	import {
+		NSpin
+	} from 'naive-ui';
 </script>

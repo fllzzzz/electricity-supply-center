@@ -12,6 +12,7 @@
 			align-items: flex-start;
 			#date {
 				margin-right: 36px;
+				align-self: flex-end;
 				span {
 					font-size: 32px;
 					font-family: LESLIE;
@@ -38,7 +39,7 @@
 				<template
 					v-for="(item, index) in dateTime.slice(0, 3)"
 				>
-					<span id="value">{{ item }}</span>
+					<span id="value">{{ valueFormater(item) }}</span>
 					<span id="split"
 						v-if="! (index === dateTime.slice(0, 3).length - 1)"
 					>-</span>
@@ -48,7 +49,7 @@
 				<template
 					v-for="(item, index) in dateTime.slice(3)"
 				>
-					<span id="value">{{ item }}</span>
+					<span id="value">{{ valueFormater(item) }}</span>
 					<span id="split"
 						v-if="! (index === dateTime.slice(3).length - 1)"
 					>:</span>
@@ -78,6 +79,13 @@
 			).forEach((item, index) => {
 				dateTime[index] = item;
 			});
+	};
+
+	const valueFormater = (
+		value :number
+	) => {
+		if(value < 10) return `0${value}`;
+		return `${value}`;
 	};
 
 	onMounted(() => {

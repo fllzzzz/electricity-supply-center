@@ -17,10 +17,11 @@
 </template>
 
 <script setup lang="ts" generic="
-	T  extends
-	keyof RemoveIndex<T> extends
-	keyof RemoveIndex<EChartsOption> ? unknown : never
-">
+	T extends 
+	keyof T extends never ? 
+	never : keyof RemoveIndex<T> extends keyof RemoveIndex<EChartsOption> ? 
+	Omit<EChartsOption, 'baseOption' | 'options'> : never
+"> 
 	import debdounce from '@/utils/debounce';
 	import * as echarts from 'echarts/core';
 
@@ -100,7 +101,7 @@
 					instance = echarts.init(elWrapper);
 				}
 
-				instance.setOption(props.config.chartsOptions as EChartsOption);
+				instance.setOption(props.config.chartsOptions);
 			});
 
 			observer.observe(elWrapper);

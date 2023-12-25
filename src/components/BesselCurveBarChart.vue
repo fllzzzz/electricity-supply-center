@@ -13,27 +13,6 @@
 </template>
 
 <script setup lang="ts">
-	import Echarts from '@/components/Echarts.vue';
-
-	import {
-		CustomChart,
-	} from 'echarts/charts';
-
-	import {
-		DatasetComponent,
-		GridComponent,
-	} from 'echarts/components';
-
-	import {
-		SVGRenderer,
-	} from 'echarts/renderers';
-
-	import {
-		ref,
-		computed,
-		watchEffect,
-	} from 'vue';
-
 	import type {
 		PropType
 	} from 'vue';
@@ -53,6 +32,27 @@
 		LinearGradientObject,
 		RadialGradientObject
 	} from 'echarts/core';
+
+	import Echarts from '@/components/Echarts.vue';
+
+	import {
+		ref,
+		computed,
+		watchEffect,
+	} from 'vue';
+
+	import {
+		CustomChart,
+	} from 'echarts/charts';
+
+	import {
+		DatasetComponent,
+		GridComponent,
+	} from 'echarts/components';
+
+	import {
+		SVGRenderer,
+	} from 'echarts/renderers';
 
 	type ECOption = ComposeOption<
 	 	| GridComponentOption
@@ -125,7 +125,7 @@
 			yAxisName: {
 				size: fonts.yAxisName.size * ratio,
 				lineHright: fonts.yAxisName.lineHeight ? 
-				fonts.yAxisName.lineHeight * ratio : 10 * ratio,
+				fonts.yAxisName.lineHeight * ratio : 50 * ratio,
 			},
 		};
 	});
@@ -154,11 +154,29 @@
 			if(
 				data[0][0] !== 'cover0'
 			) {
+				data.map((row, index) => {
+					if(row[0] === 'cover0') return index;
+					return undefined;
+				}).forEach(value => {
+					if(! value) return;
+
+					data.splice(value, 1);
+				});
+
 				data.unshift(['cover0', 0]);
 			}
 			if(
 				data[data.length - 1][0] !== 'cover1'
 			) {
+				data.map((row, index) => {
+					if(row[0] === 'cover1') return index;
+					return undefined;
+				}).forEach(value => {
+					if(! value) return;
+
+					data.splice(value, 1);
+				});
+
 				data.push(['cover1', 0]);
 			};
 		};
@@ -185,7 +203,7 @@
 				},
 				axisLabel: {
 					interval: 0,
-					margin: 4,
+					margin: 16,
 					color: props.config.fonts.xAxis.fill,
 					fontSize: getFontOptions.value.xAxis,
 					fontWeight: props.config.fonts.xAxis.weight,
@@ -229,7 +247,7 @@
 				},
 				axisLabel: {
 					interval: 0,
-					margin: 4,
+					margin: 8,
 					color: props.config.fonts.yAxis.fill,
 					fontSize: getFontOptions.value.yAxis,
 					fontWeight: props.config.fonts.yAxis.weight,
@@ -327,8 +345,8 @@
 								textData.text,
 								textData.options.invisible
 							] = [
-								points[0] - (w / 2),
-								points[1] - (h * 1.1),
+								points[0] - w,
+								points[1] - (h * 2.75),
 								`${values[1]}`,
 								false
 							];

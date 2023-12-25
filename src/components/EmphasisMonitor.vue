@@ -82,7 +82,9 @@
 				>
 					<div class="emphasis-monitor__wrapper__item">
 						<div class="emphasis-monitor__wrapper__item__top-side">
-							<video :src="item.src"></video>
+							<video :src="item.src"
+								muted autoplay
+							></video>
 						</div>
 						<div class="emphasis-monitor__wrapper__item__bottom-side">
 							<div class="graph dot"></div>

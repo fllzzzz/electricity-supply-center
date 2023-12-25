@@ -99,6 +99,19 @@
 		return _player;
 	};
 
+	const loadingManager = {
+		open(
+			el :HTMLMediaElement
+		) {
+
+		},
+		close(
+			el :HTMLMediaElement
+		) {
+			
+		}
+	};
+
 	const sizeUpHandler = () => {
 		telpTarget.value = 'body';
 		targetInfo.type = 'large'
@@ -116,11 +129,12 @@
 	};
 
 	watchEffect(() => {
+
 		elVideo.value &&
 		targetInfo.src &&
-		((el, src) => watchEffect(() => player = creatPlayer(
-			el, src
-		)))(elVideo.value, targetInfo.src);
+		((el, src) => {
+			player = creatPlayer(el, src);
+		})(elVideo.value, targetInfo.src);
 	});
 
 	watchEffect(() => {
