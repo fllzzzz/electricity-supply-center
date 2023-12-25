@@ -32,6 +32,7 @@
 	.first-class {
 		font-size: calc(var(--fontSize) * 1px);
 		color: #00FFD7;
+		opacity: 0.5;
 	}
 
 	.first-class.is-out {

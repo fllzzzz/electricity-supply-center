@@ -65,7 +65,6 @@
 		| PatternObject 
 		| LinearGradientObject 
 		| RadialGradientObject
-		| InstanceType<new () => echarts.graphic.LinearGradient>;
 
 	type FontOptions = {
 		size :number;

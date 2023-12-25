@@ -8,13 +8,11 @@
 </style>
 
 <template>
-	<video class="container">
-		dsads
-	</video>
+	<div class="container">
+		<ChartsDemo></ChartsDemo>
+	</div>
 </template>
 
 <script setup lang="ts">
-	import {
-		NSpin
-	} from 'naive-ui';
+	import ChartsDemo from '@/components/ChartsDemo.vue';
 </script>
