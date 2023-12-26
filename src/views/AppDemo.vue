@@ -2,17 +2,16 @@
 	.container {
 		width: vw(684);
 		height: vw(488);
-		border: 4px dotted red;
+		background-color: RGBA(58, 81, 92, 1);
 		position: relative;
 	}
 </style>
 
 <template>
 	<div class="container">
-		<ChartsDemo></ChartsDemo>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import ChartsDemo from '@/components/ChartsDemo.vue';
+
 </script>

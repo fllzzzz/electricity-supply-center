@@ -171,7 +171,6 @@
 				&:nth-child(2) {
 					flex: 1;
 					width: vw(570);
-					background-color: red;
 				}
 			}
 		}
@@ -226,7 +225,9 @@
 							</template>
 						</div>
 					</div>
-					<div class="block"></div>
+					<div class="block">
+						<ChartsLineDotVue></ChartsLineDotVue>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -238,7 +239,7 @@
 		PropType
 	} from 'vue';
 
-	import ElectricityUsageCharts from '@/components/ElectricityUsageCharts.vue';
+	import ChartsLineDotVue from './ChartsLineDot.vue.vue';
 	import Card from '@/components/Card.vue';
 
 	import {

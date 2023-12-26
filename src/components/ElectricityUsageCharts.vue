@@ -104,14 +104,14 @@
 				data: [] as  number[][],
 				type: 'line',
 				symbol: 'circle',
-				symbolSize: 4,
+				symbolSize: 4, // 8
 				itemStyle: {
 					color: '#ffff',
-					borderWidth: 1,
+					borderWidth: 1, // 2
 					borderColor: '#00FFFF',
 				},
 				lineStyle: {
-					width: 2,
+					width: 2, // 4
 					color: '#0EF1EF',
 				},
 				areaStyle: {

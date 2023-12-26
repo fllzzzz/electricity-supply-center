@@ -64,11 +64,23 @@
 		useRouter
 	} from 'vue-router';
 
+	import {
+		overview,
+		iframe
+	} from '@/store';
+
 	const router = useRouter();
 
 	const moduleEntry = (event :MouseEvent) => {
 		const route = (event.target as HTMLElement).getAttribute('route');
 	
+		if(route === 'overview') {
+			iframe.toUEMessage.value = {
+				ctid: 10111
+			};
+			overview.store.model = undefined;
+		}
+
 		router.push({
 			name: route!
 		});
