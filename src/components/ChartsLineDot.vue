@@ -1,8 +1,4 @@
 <style lang="scss" scoped>
-	@font-face {
-		font-family: 'D-DIN';
-		src: url('@fonts/DIN-Regular.otf');
-	}
 </style>
 
 <template>
@@ -17,7 +13,8 @@
 
 <script setup lang="ts">
 	import type {
-		Color
+		AxisOptions,
+		SerieOptions
 	} from '@/types';
 
 	import type {
@@ -60,9 +57,10 @@
 
 	export type Config = {
 		designWidth :number;
-		fill :Color;
-		stroke :Color;
-		dataList :number[][];
+		data? :number[][];
+		xAxis? :AxisOptions;
+		yAxis? :AxisOptions;
+		series? :SerieOptions;
 	};
 
 	type ECOption = ComposeOption<
@@ -74,50 +72,12 @@
 	const props = defineProps({
 		config: {
 			type: Object as PropType<Config>,
-			default: () :Config => ({
-				designWidth: 3840,
-				stroke: 'rgba(240, 255, 0, 1)',
-				fill: {
-					type: 'linear',
-					x: 0, y: 0, x2: 0, y2: 1,
-					colorStops: [
-						{
-							offset: 0,
-							color: 'rgba(240, 255, 0, 1)'
-						},
-						{
-							offset: 1,
-							color: 'rgba(255, 255, 255, 0)'
-						}
-					]
-				},
-				dataList: [
-					[1, 150],
-					[2, 230],
-					[3, 224],
-					[4, 500],
-					[5, 166],
-					[6, 150],
-					[7, 230],
-					[8, 224],
-					[9, 500],
-					[10, 166],
-					[11, 150],
-					[12, 230],
-					[13, 224],
-					[14, 500],
-					[15, 166],
-					[16, 150],
-					[17, 230],
-					[18, 224],
-					[19, 500],
-					[20, 166],
-				],
-			}),
+			required: true,
 		}
 	});
-
+	
 	const options = ref<ECOption>({});
+	const config = ref<Config | undefined>();
 	const chartsSrv = new ChartsService({
 		designWidth: props.config.designWidth
 	});
@@ -126,40 +86,41 @@
 		options.value = {
 			dataset: {
 				sourceHeader: false,
-				source: props.config.dataList
+				source: config.value?.data
 			},
 			grid: {
 				containLabel: true,
 				top: chartsSrv.sizeConverter(80),
 				right: chartsSrv.sizeConverter(15),
-				bottom: 0,
+				bottom: chartsSrv.sizeConverter(1),
 				left: chartsSrv.sizeConverter(10),
 			},
 			xAxis: {
 				scale: true,
 				axisLabel: {
-					color: '#E3E3E3',
-					fontFamily: 'D-DIN',
-					fontSize: chartsSrv.sizeConverter(24),
-					margin: chartsSrv.sizeConverter(31),
+					formatter: config.value?.xAxis?.formatter,
+					color: config.value?.xAxis?.fontOptions?.color,
+					fontFamily: config.value?.xAxis?.fontOptions?.family,
+					fontSize: chartsSrv.sizeConverter(config.value?.xAxis?.fontOptions?.size),
+					margin: chartsSrv.sizeConverter(config.value?.xAxis?.offset),
 				},
 				axisLine: {show: false},
 				axisTick: {show: false},
 				splitLine: {show: false},
 			},
 			yAxis: {
-				name: '单位：kW·h',
+				name: config.value?.yAxis?.name,
 				nameTextStyle: {
-					color: '#FFFFFF',
-					fontFamily: 'Adobe Heiti Std',
-					fontSize: chartsSrv.sizeConverter(24),
-					padding: chartsSrv.sizeConverter(22),
+					color: config.value?.yAxis?.nameOptions?.fontOptions?.color,
+					fontFamily: config.value?.yAxis?.nameOptions?.fontOptions?.family,
+					fontSize: chartsSrv.sizeConverter(config.value?.yAxis?.nameOptions?.fontOptions?.size),
 				},
 				axisLabel: {
-					color: '#E3E3E3',
-					fontFamily: 'D-DIN',
-					fontSize: chartsSrv.sizeConverter(24),
-					margin: chartsSrv.sizeConverter(15),
+					formatter: config.value?.yAxis?.formatter,
+					color: config.value?.yAxis?.fontOptions?.color,
+					fontFamily: config.value?.yAxis?.fontOptions?.family,
+					fontSize: chartsSrv.sizeConverter(config.value?.yAxis?.fontOptions?.size),
+					margin: chartsSrv.sizeConverter(config.value?.yAxis?.offset),
 				},
 				axisLine: {show: false},
 				axisTick: {show: false},
@@ -181,19 +142,19 @@
 					y: 1
 				},
 				symbol: 'circle',
-				symbolSize: chartsSrv.sizeConverter(10),
+				symbolSize: chartsSrv.sizeConverter(config.value?.series?.symbolOptions?.size),
 				itemStyle: {
-					color: '#ffff',
-					borderWidth: chartsSrv.sizeConverter(2.5),
-					borderColor: props.config.stroke
+					color: config.value?.series?.symbolOptions?.color,
+					borderWidth: chartsSrv.sizeConverter(config.value?.series?.symbolOptions?.borderWidth),
+					borderColor: config.value?.series?.symbolOptions?.borderColor
 				},
 				lineStyle: {
-					color: props.config.stroke,
-					width: chartsSrv.sizeConverter(5)
+					color: config.value?.series?.stroke,
+					width: chartsSrv.sizeConverter(config.value?.series?.lineOptions?.width)
 				},
 				areaStyle: {
 					opacity: 0.3,
-					color: props.config.fill
+					color:  config.value?.series?.fill
 				}
 			}
 		};
@@ -206,5 +167,9 @@
 		SVGRenderer
 	];
 
-	watchEffect(builder);
+	watchEffect(() => {
+		config.value = props.config;
+
+		builder();
+	});
 </script>

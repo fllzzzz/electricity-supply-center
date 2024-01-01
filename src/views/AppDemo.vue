@@ -1,17 +1,16 @@
 <style lang="scss" scoped>
 	.container {
-		width: vw(684);
-		height: vw(488);
-		background-color: RGBA(58, 81, 92, 1);
-		position: relative;
+		width: vw(683);
+		height: vw(730);
 	}
 </style>
 
 <template>
 	<div class="container">
+		<ElectricityUsage></ElectricityUsage>
 	</div>
 </template>
 
 <script setup lang="ts">
-
+	import ElectricityUsage from '@/components/ElectricityUsage.vue';
 </script>

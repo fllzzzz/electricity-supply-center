@@ -141,9 +141,9 @@
 						<span>历史发电量</span>
 					</div>
 					<div class="block">
-						<BesselCurveBarChart
+						<ChartsBesselCurveBar
 							:config="config"
-						></BesselCurveBarChart>
+						></ChartsBesselCurveBar>
 					</div>
 				</div>
 			</div>
@@ -152,21 +152,23 @@
 </template>
 
 <script setup lang="ts">
-	import * as echarts from 'echarts/core'
-	import BesselCurveBarChart 
-	from '@/components/BesselCurveBarChart.vue';
+	import type {
+		Config as ChartsBesselCurveBarType
+	} from '@/components/ChartsBesselCurveBar.vue';
+
+	import type {
+		PropType
+	} from 'vue';
+
+	import * as echarts from 'echarts/core';
+
+	import ChartsBesselCurveBar 
+	from '@/components/ChartsBesselCurveBar.vue';
 
 	import Card from '@/components/Card.vue';
 
 	import {
 		reactive
-	} from 'vue';
-
-	import type * as BesselCurveBarChartType 
-	from '@/components/BesselCurveBarChart.vue';
-
-	import type {
-		PropType
 	} from 'vue';
 
 	type Config = {
@@ -190,35 +192,8 @@
 		}
 	});
 
-	const config = reactive<BesselCurveBarChartType.Config>({
+	const config = reactive<ChartsBesselCurveBarType>({
 		designWidth: 3840,
-		yAxisName: '单位/kW·h',
-		fonts: {
-			itemIndicator: {
-				size: 32,
-				family: 'DIN',
-				fill: '#FFFFFF',
-				weight: 'bolder'
-			},
-			xAxis: {
-				size: 24,
-				family: 'Source Han Sans CN',
-				fill: '#FFFFFF',
-				weight: 'normal'
-			},
-			yAxis: {
-				size: 24,
-				family: 'DIN',
-				fill: '#FFFFFF',
-				weight: 'normal'
-			},
-			yAxisName: {
-				size: 24,
-				family: 'Source Han Sans CN',
-				fill: '#FFFFFF',
-				weight: 'normal',
-			}
-		},
 		data: [
 			['0时', 50],
 			['2时', 10],
@@ -228,20 +203,54 @@
 			['10时', 60],
 			['12时', 60],
 		] as [string, number][],
-		stroke: 'rgba(248, 181, 81, 1)',
-		fill: (() => {
-			return new echarts.graphic.LinearGradient(
-				0, 0, 0, 1, [
-					{
-						offset: 0,
-						color: 'rgba(248, 181, 81, 1)'
-					},
-					{
-						offset: 1,
-						color: 'rgba(248, 181, 81, 0.6)'
-					},
-				]
-			);
-		})(),
+		xAxis: {
+			fontOptions: {
+				size: 24,
+				family: 'Source Han Sans CN',
+				color: '#FFFFFF',
+				weight: 'normal'
+			}
+		},
+		yAxis: {
+			name: 't',
+			nameOptions: {
+				fontOptions: {
+					size: 28,
+					family: 'Source Han Sans CN',
+					color: '#FFFFFF',
+					weight: 'normal',
+					lineHeight: 1,
+				}
+			},
+			fontOptions: {
+				size: 24,
+				family: 'DIN',
+				color: '#FFFFFF',
+				weight: 'normal'
+			}
+		},
+		series: {
+			stroke: 'rgba(0, 255, 114, 1)',
+			fill: (() => {
+				return new echarts.graphic.LinearGradient(
+					0, 0, 0, 1, [
+						{
+							offset: 0,
+							color: 'rgba(0, 255, 114, 1)'
+						},
+						{
+							offset: 1,
+							color: 'rgba(0, 255, 114, 0.6)'
+						},
+					]
+				);
+			})(),
+			fontOptions: {
+				size: 32,
+				family: 'DIN',
+				color: '#FFFFFF',
+				weight: 'bolder'
+			},
+		}
 	});
 </script>

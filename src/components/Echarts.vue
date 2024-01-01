@@ -22,6 +22,14 @@
 	never : keyof RemoveIndex<T> extends keyof RemoveIndex<EChartsOption> ? 
 	Omit<EChartsOption, 'baseOption' | 'options'> : never
 "> 
+	import type {
+		EChartsOption,
+	} from 'echarts';
+
+	import type {
+		RemoveIndex
+	} from '@/types';
+
 	import debdounce from '@/utils/debounce';
 	import * as echarts from 'echarts/core';
 
@@ -32,14 +40,6 @@
 		onMounted,
 		onUnmounted
 	} from 'vue';
-
-	import type {
-		EChartsOption,
-	} from 'echarts';
-
-	import type {
-		RemoveIndex
-	} from '@/types';
 
 	type EChartsExtensions = 
 		(typeof echarts.use extends 
@@ -85,6 +85,47 @@
 		}
 	}, 20));
 
+	const removeInvalid = <T extends object>(
+		source :T
+	) => {
+		if(source instanceof Array) {
+			if(source.length === 0) return undefined;
+
+			const result :unknown[] = source.map(item => {
+				if(item instanceof Object) return removeInvalid(item);
+				return item;
+			}).filter(
+				item => item ? 
+				true : item === 0 ? 
+				true : item === '0' ? 
+				true : item === false ?
+				true : false
+			);
+
+			if(result.length === 0) return undefined;
+			return result;
+		}else if(source instanceof Function) {
+			return source;
+		}else {
+			const result = Object.entries(source).map(row => {
+				if(row[1] instanceof Object) {
+					row[1] = removeInvalid(row[1]);
+				}
+
+				return row;
+			}).filter(
+				row => row[1] ? 
+				true : row[1] === 0 ? 
+				true : row[1] === '0' ? 
+				true : row[1] === false ?
+				true : false
+			);
+
+			if(result.length === 0) return undefined;
+			return Object.fromEntries(result);
+		}
+	};
+
 	onMounted(() => {
 		elCharts.value &&
 		(el => {
@@ -96,12 +137,16 @@
 			};
 
 			watchEffect(() => {
+				const opt = removeInvalid(props.config.chartsOptions);
+
+				if(! opt) return;
+
 				if(! instance) {
 					echarts.use(props.config.chartsUseList);
 					instance = echarts.init(elWrapper);
 				}
 
-				instance.setOption(props.config.chartsOptions);
+				instance.setOption(opt as EChartsOption);
 			});
 
 			observer.observe(elWrapper);

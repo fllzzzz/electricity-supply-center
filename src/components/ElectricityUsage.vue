@@ -226,7 +226,9 @@
 						</div>
 					</div>
 					<div class="block">
-						<ChartsLineDotVue></ChartsLineDotVue>
+						<ChartsLineDotVue
+							:config="chartsLineDotConfig"
+						></ChartsLineDotVue>
 					</div>
 				</div>
 			</div>
@@ -236,10 +238,14 @@
 
 <script setup lang="ts">
 	import type {
+		Config as ChartsLineDotType
+	} from '@/components/ChartsLineDot.vue';
+
+	import type {
 		PropType
 	} from 'vue';
 
-	import ChartsLineDotVue from './ChartsLineDot.vue.vue';
+	import ChartsLineDotVue from '@/components/ChartsLineDot.vue';
 	import Card from '@/components/Card.vue';
 
 	import {
@@ -315,5 +321,31 @@
 				}
 			} as Config
 		}
+	});
+
+	const chartsLineDotConfig = reactive<ChartsLineDotType>({
+		designWidth: 3840,
+		data: [
+			[1, 150],
+			[2, 230],
+			[3, 224],
+			[4, 500],
+			[5, 166],
+			[6, 150],
+			[7, 230],
+			[8, 224],
+			[9, 500],
+			[10, 166],
+			[11, 150],
+			[12, 230],
+			[13, 224],
+			[14, 500],
+			[15, 166],
+			[16, 150],
+			[17, 230],
+			[18, 224],
+			[19, 500],
+			[20, 166]
+		],
 	});
 </script>

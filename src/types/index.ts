@@ -32,11 +32,50 @@ export type Color =
 | LinearGradientObject 
 | RadialGradientObject;
 
-export type FontsOptions = {
+export type FontOptions = {
 	size? :number;
 	family? :string;
 	color? :string;
 	lineHeight? :number;
 	weight? :number | 'bold' | 'bolder' | 'lighter' |'normal';
+};
+
+export type AxisNameOptions = {
+	padding? :[number, number, number, number] | number;
+	fontOptions? :FontOptions;
+};
+
+export type LineStyle = {
+	width?: number;
+	color? :Color;
+};
+
+export type StateOptions = {
+	show? :boolean;
+};
+
+export type SymbolOptions = {
+	size? :number;
+	color? :Color;
+	borderWidth? :number;
+	borderColor? :Color;
+};
+
+export type AxisOptions = {
+	name? :string;
+	nameOptions? :AxisNameOptions;
+	offset? :number;
+	fontOptions? :FontOptions;
+	tickOptions? :StateOptions & LineStyle;
+	lineOptions? :StateOptions & LineStyle;
+	formatter? :((value :string | number, index :number) => string);
+};
+
+export type SerieOptions = {
+	fill? :Color;
+	stroke? :Color;
+	fontOptions? :FontOptions;
+	lineOptions? :StateOptions & LineStyle;
+	symbolOptions? :SymbolOptions;
 };
 	
