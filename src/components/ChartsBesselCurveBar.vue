@@ -139,7 +139,10 @@
 					show: false
 				},
 				axisLine: {
-					show: true
+					show: true,
+					lineStyle: {
+						color: 'rgba(204, 204, 204, 0.5)',
+					}
 				},
 				axisLabel: {
 					interval: 0,

@@ -41,7 +41,7 @@ export type FontOptions = {
 };
 
 export type AxisNameOptions = {
-	padding? :[number, number, number, number] | number;
+	padding? :[number, number, number, number];
 	fontOptions? :FontOptions;
 };
 
@@ -66,14 +66,22 @@ export type AxisOptions = {
 	nameOptions? :AxisNameOptions;
 	offset? :number;
 	fontOptions? :FontOptions;
-	tickOptions? :StateOptions & LineStyle;
+	tickOptions? :StateOptions & LineStyle & {inside?: boolean};
 	lineOptions? :StateOptions & LineStyle;
 	formatter? :((value :string | number, index :number) => string);
+};
+
+export type GridOptions = {
+	top? :number;
+	right? :number;
+	bottom? :number;
+	left? :number;
 };
 
 export type SerieOptions = {
 	fill? :Color;
 	stroke? :Color;
+	opacity? :number;
 	fontOptions? :FontOptions;
 	lineOptions? :StateOptions & LineStyle;
 	symbolOptions? :SymbolOptions;

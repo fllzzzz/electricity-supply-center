@@ -1,16 +1,19 @@
 <style lang="scss" scoped>
 	.container {
-		width: vw(683);
-		height: vw(730);
+		width: 50vw;
+		height: 50vh;
+		border: 1px solid red;
 	}
 </style>
 
 <template>
 	<div class="container">
-		<ElectricityUsage></ElectricityUsage>
+
 	</div>
 </template>
 
 <script setup lang="ts">
-	import ElectricityUsage from '@/components/ElectricityUsage.vue';
+	import type {
+		AxiosRequestConfig
+	} from 'axios';
 </script>

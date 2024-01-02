@@ -33,7 +33,7 @@ export default class ChartsService {
 			);
 		}
 
-		if(! size) return undefined;
+		if(! size && size !== 0) return undefined;
 		return window.innerWidth / this.designWidth * size;
 	}
 };

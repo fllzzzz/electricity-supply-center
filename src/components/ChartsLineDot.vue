@@ -14,7 +14,8 @@
 <script setup lang="ts">
 	import type {
 		AxisOptions,
-		SerieOptions
+		SerieOptions,
+		GridOptions
 	} from '@/types';
 
 	import type {
@@ -54,6 +55,7 @@
 		ref,
 		watchEffect
 	} from 'vue';
+import { color } from 'echarts';
 
 	export type Config = {
 		designWidth :number;
@@ -61,6 +63,7 @@
 		xAxis? :AxisOptions;
 		yAxis? :AxisOptions;
 		series? :SerieOptions;
+		grid? :GridOptions;
 	};
 
 	type ECOption = ComposeOption<
@@ -90,10 +93,18 @@
 			},
 			grid: {
 				containLabel: true,
-				top: chartsSrv.sizeConverter(80),
-				right: chartsSrv.sizeConverter(15),
-				bottom: chartsSrv.sizeConverter(1),
-				left: chartsSrv.sizeConverter(10),
+				top: chartsSrv.sizeConverter(
+					config.value?.grid?.top
+				),
+				right: chartsSrv.sizeConverter(
+					config.value?.grid?.right
+				),
+				bottom: chartsSrv.sizeConverter(
+					config.value?.grid?.bottom
+				),
+				left: chartsSrv.sizeConverter(
+					config.value?.grid?.left
+				),
 			},
 			xAxis: {
 				scale: true,
@@ -104,8 +115,25 @@
 					fontSize: chartsSrv.sizeConverter(config.value?.xAxis?.fontOptions?.size),
 					margin: chartsSrv.sizeConverter(config.value?.xAxis?.offset),
 				},
-				axisLine: {show: false},
-				axisTick: {show: false},
+				axisLine: {
+					show: config.value?.xAxis?.lineOptions?.show ?? false,
+					lineStyle: {
+						color: config.value?.xAxis?.lineOptions?.color,
+						width: chartsSrv.sizeConverter(
+							config.value?.xAxis?.lineOptions?.width
+						),
+					}
+				},
+				axisTick: {
+					show: config.value?.xAxis?.tickOptions?.show ?? false,
+					inside: config.value?.xAxis?.tickOptions?.inside,
+					lineStyle: {
+						color: config.value?.xAxis?.tickOptions?.color,
+						width: chartsSrv.sizeConverter(
+							config.value?.xAxis?.tickOptions?.width
+						),
+					}
+				},
 				splitLine: {show: false},
 			},
 			yAxis: {
@@ -114,6 +142,21 @@
 					color: config.value?.yAxis?.nameOptions?.fontOptions?.color,
 					fontFamily: config.value?.yAxis?.nameOptions?.fontOptions?.family,
 					fontSize: chartsSrv.sizeConverter(config.value?.yAxis?.nameOptions?.fontOptions?.size),
+					padding: config.value?.yAxis?.nameOptions?.padding ? 
+					[
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[0]
+						)!,
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[1]
+						)!,
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[2]
+						)!,
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[3]
+						)!,
+					] : 0,
 				},
 				axisLabel: {
 					formatter: config.value?.yAxis?.formatter,
@@ -122,8 +165,25 @@
 					fontSize: chartsSrv.sizeConverter(config.value?.yAxis?.fontOptions?.size),
 					margin: chartsSrv.sizeConverter(config.value?.yAxis?.offset),
 				},
-				axisLine: {show: false},
-				axisTick: {show: false},
+				axisLine: {
+					show: config.value?.yAxis?.lineOptions?.show ?? false,
+					lineStyle: {
+						color: config.value?.yAxis?.lineOptions?.color,
+						width: chartsSrv.sizeConverter(
+							config.value?.yAxis?.lineOptions?.width
+						),
+					}
+				},
+				axisTick: {
+					show: config.value?.yAxis?.tickOptions?.show ?? false,
+					inside: config.value?.yAxis?.tickOptions?.inside,
+					lineStyle: {
+						color: config.value?.yAxis?.tickOptions?.color,
+						width: chartsSrv.sizeConverter(
+							config.value?.yAxis?.tickOptions?.width
+						),
+					}
+				},
 				splitLine: {
 					lineStyle: {
 						type: [
@@ -153,7 +213,7 @@
 					width: chartsSrv.sizeConverter(config.value?.series?.lineOptions?.width)
 				},
 				areaStyle: {
-					opacity: 0.3,
+					opacity: config.value?.series?.opacity,
 					color:  config.value?.series?.fill
 				}
 			}
