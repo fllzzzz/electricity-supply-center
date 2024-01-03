@@ -55,7 +55,6 @@
 		ref,
 		watchEffect
 	} from 'vue';
-import { color } from 'echarts';
 
 	export type Config = {
 		designWidth :number;
@@ -156,7 +155,7 @@ import { color } from 'echarts';
 						chartsSrv.sizeConverter(
 							config.value.yAxis.nameOptions.padding[3]
 						)!,
-					] : 0,
+					] : undefined,
 				},
 				axisLabel: {
 					formatter: config.value?.yAxis?.formatter,
