@@ -69,6 +69,7 @@ export type AxisOptions = {
 	tickOptions? :StateOptions & LineStyle & {inside?: boolean};
 	lineOptions? :StateOptions & LineStyle;
 	formatter? :((value :string | number, index :number) => string);
+	max? :number;
 };
 
 export type GridOptions = {
@@ -85,5 +86,14 @@ export type SerieOptions = {
 	fontOptions? :FontOptions;
 	lineOptions? :StateOptions & LineStyle;
 	symbolOptions? :SymbolOptions;
+};
+
+export type ChartsOptions<T extends unknown[]> = {
+	designWidth :number;
+	data? :T
+	xAxis? :AxisOptions;
+	yAxis? :AxisOptions;
+	series? :SerieOptions;
+	gridOptions? :GridOptions;
 };
 	
