@@ -33,11 +33,11 @@
 	const config = reactive<BarCoverGroup>({
 		designWidth: 3840,
 		data: [
-			['item1', 10, 10],
-			['item2', 10, 10],
-			['item3', 10, 10],
-			['item4', 10, 10],
-			['item5', 10, 10],
+			['item1', 10, 20, 30, 40],
+			['item2', 10, 20, 30, 40],
+			['item3', 10, 20, 30, 40],
+			['item4', 10, 20, 30, 40],
+			['item5', 10, 20, 30, 40],
 		],
 		gridOptions: {
 			top: 75,

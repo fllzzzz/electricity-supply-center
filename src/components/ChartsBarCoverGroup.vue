@@ -28,6 +28,7 @@
 	import type {
 		DatasetComponentOption,
 		GridComponentOption,
+		LegendComponentOption
 	} from 'echarts/components';
 
 	import type {
@@ -49,6 +50,7 @@
 	import {
 		DatasetComponent,
 		GridComponent,
+		LegendComponent
 	} from 'echarts/components';
 
 	import {
@@ -61,6 +63,7 @@
 	 	| GridComponentOption
 		| DatasetComponentOption
 		| CustomSeriesOption
+		| LegendComponentOption
 	>;
 
 	type DistanceJudgesConfig = {
@@ -77,6 +80,15 @@
 	});
 
 	let maxData :number;
+	let [
+		_legendData,
+		_requireDistance,
+		_dataBarWidht,
+		_dataBarMargin
+	] = [
+		[]  as string[],
+		0, 0, 0
+	];
 	const options = ref<ECOption>({});
 	const canvasCtx = document.createElement('canvas').getContext('2d');
 	const config = ref<Config | undefined>();
@@ -88,6 +100,116 @@
 		widht: [14, 7],
 		ratios: 8 / 10,
 	};
+	const useList = [
+		GridComponent,
+		DatasetComponent,
+		CustomChart,
+		LegendComponent,
+		SVGRenderer,
+	];
+
+	const dimensionsAdapter = (
+		data :unknown[][],
+		useRow? :boolean
+	) => {
+		if(data.length === 0) return undefined;
+
+		if(! useRow) return data.sort((a, b) => a.length > b.length ? -1 : 1)[0]
+			.slice(1).map((_, index) => index + 1);
+		
+		return data.slice(1).map((_, index) => index + 1);
+	};
+
+	const createSeries = () => config.value?.data?.map(
+		row => row.slice(1)
+	).sort((a, b) => a.length > b.length ? -1 : 1)[0]
+	.map((_, yAxisValueIndex) => {
+		_legendData.push(`L${yAxisValueIndex + 1}`);
+		return {
+			name: `L${yAxisValueIndex + 1}`,
+			type: 'custom',
+			encode: {
+				x: 0,
+				y: yAxisValueIndex + 1,
+			},
+			renderItem: (params: any, api: any) => {
+				if (!canvasCtx) throw new Error('@echarts => canvas context is not available');
+
+				canvasCtx.font =
+					`
+						${config.value?.series?.fontOptions?.size} 
+						${config.value?.series?.fontOptions?.family}
+					`;
+
+				const [
+					values
+				] = [
+						[
+							api.value(params.encode.x[0]),
+							api.value(params.encode.y[0])
+						],
+					];
+
+				const [
+					points, originPoints,
+				] = [
+						api.coord(values),
+						api.coord([0, 0]),
+					];
+
+				const mst = canvasCtx.measureText(`${values[1]}`);
+
+				const [
+					w, h
+				] = [
+						Math.abs(mst.actualBoundingBoxLeft) +
+						Math.abs(mst.actualBoundingBoxRight),
+
+						Math.abs(mst.actualBoundingBoxAscent) +
+						Math.abs(mst.actualBoundingBoxDescent)
+					];
+
+				return {
+					type: 'group',
+					children: [
+						{
+							type: 'rect',
+							style: {
+								fill: 'red'
+							},
+							shape: {
+								x: (
+									(points[0] - (_requireDistance / 2)) +
+									(yAxisValueIndex * (_dataBarWidht + _dataBarMargin))
+								),
+								y: points[1],
+								width: _dataBarWidht,
+								height: Math.abs(points[1] - originPoints[1])
+							}
+						},
+						{
+							type: 'text',
+							x: (
+								(
+									(points[0] - (_requireDistance / 2)) +
+									(yAxisValueIndex * (_dataBarWidht + _dataBarMargin))
+								) - w
+							),
+							y: points[1] - (h * 2),
+							style: {
+								fill: config.value?.series?.fontOptions?.color,
+								text: values[1],
+								fontSize: chartsSrv.sizeConverter(
+									config.value?.series?.fontOptions?.size
+								),
+								fontFamily: config.value?.series?.fontOptions?.family,
+							}
+						}
+					]
+				}
+			}
+		};
+	});
 
 	const createDistanceAdapter = (
 		config :DistanceJudgesConfig
@@ -127,18 +249,6 @@
 		};
 	};
 
-	const dimensionsAdapter = (
-		data :unknown[][],
-		useRow? :boolean
-	) => {
-		if(data.length === 0) return undefined;
-
-		if(! useRow) return data.sort((a, b) => a.length > b.length ? -1 : 1)[0]
-			.slice(1).map((_, index) => index + 1);
-		
-		return data.slice(1).map((_, index) => index + 1);
-	};
-
 	const builder = () => {
 		const distanceAdapter = createDistanceAdapter({
 			ratios: barSizeConfig.ratios,
@@ -156,6 +266,9 @@
 			dataset: {
 				sourceHeader: false,
 				source: config.value?.data
+			},
+			legend: {
+				data: _legendData
 			},
 			grid: {
 				containLabel: true,
@@ -248,138 +361,74 @@
 					}
 				}
 			},
-			series: {
-				type: 'custom',
-				encode: {
-					x: 0,
-					y: dimensionsAdapter(config.value?.data ?? [])
-				},
-				renderItem: (params, api) => {
-					const [
-						xAxisValues,
-						yAxisValues,
-						nextXAxisValues,
-						preXAxisValues
-					] = [
-						params.encode.x.map(dis => api.value(dis)),
-						params.encode.y.map(dis => api.value(dis)),
-						params.encode.x.map(dis => api.value(dis, params.dataIndexInside + 1)),
-						params.encode.x.map(dis => api.value(dis, params.dataIndexInside ? params.dataIndexInside - 1 : 0)),
-					];
-
-					const [
-						x, y, originY, nextX, preX, maxY
-					] = [
-						xAxisValues.map(value => api.coord([value, 0])[0]),
-						yAxisValues.map(value => api.coord([0, value])[1]),
-						api.coord([0, 0])[1],
-						nextXAxisValues.map(value => api.coord([value, 0])[0]),
-						preXAxisValues.map(value => api.coord([value, 0])[0]),
-						api.coord([0, maxData])[1],
-					];
-
-					const xAxisDiff = Math.abs((nextX[0] ? nextX[0] : preX[0]) - x[0]);
-
-					const {
-						widht: dataBarWidht,
-						margin: dataBarMargin,
-						requireDistance
-					} = distanceAdapter(params.encode.y.length, xAxisDiff);
-
-					const [
-						coverBarX, coverBarY, coverBarWidth, coverBarHeight,
-					] = [
-						x[0] - (requireDistance / 2),
-						maxY,
-						requireDistance,
-						Math.abs(maxY - originY),
-					];
-
-					if (!canvasCtx) throw new Error('@echarts => canvas context is not available');
-					canvasCtx.font = `
-						${chartsSrv.sizeConverter(
-							config.value?.series?.fontOptions?.size
-						)} 
-						${config.value?.series?.fontOptions?.family}
-					`;
-
-					const itemList :any[] = yAxisValues.map((value, index) => {
-						const mst = canvasCtx.measureText(`${value}`);
+			series: [
+				{
+					name: 'coverBar',
+					type: 'custom',
+					encode: {
+						x: 0,
+						y: dimensionsAdapter(config.value?.data ?? []),
+					},
+					renderItem: (params, api) => {
+						const [
+							xAxisValues,
+							nextXAxisValues,
+							preXAxisValues
+						] = [
+								params.encode.x.map(dim => api.value(dim)),
+								params.encode.x.map(dim => api.value(dim, params.dataIndexInside + 1)),
+								params.encode.x.map(dim => api.value(dim, params.dataIndexInside ? params.dataIndexInside - 1 : 0)),
+							];
 
 						const [
-							w, h
+							x, originY, nextX, preX, maxY
 						] = [
-							Math.abs(mst.actualBoundingBoxLeft) +
-							Math.abs(mst.actualBoundingBoxRight),
+								xAxisValues.map(value => api.coord([value, 0])[0]),
+								api.coord([0, 0])[1],
+								nextXAxisValues.map(value => api.coord([value, 0])[0]),
+								preXAxisValues.map(value => api.coord([value, 0])[0]),
+								api.coord([0, maxData])[1],
+							];
 
-							Math.abs(mst.actualBoundingBoxAscent) +
-							Math.abs(mst.actualBoundingBoxDescent)
-						];
+						const xAxisDiff = Math.abs((nextX[0] ? nextX[0] : preX[0]) - x[0]);
+
+						const {
+							requireDistance,
+							widht: dataBarWidht,
+							margin: dataBarMargin
+						} = distanceAdapter(params.encode.y.length, xAxisDiff);
+
+						const [
+							coverBarX, coverBarY, coverBarWidth, coverBarHeight,
+						] = [
+								x[0] - (requireDistance / 2),
+								maxY,
+								requireDistance,
+								Math.abs(maxY - originY),
+							];
+
+						_requireDistance = requireDistance;
+						_dataBarWidht = dataBarWidht;
+						_dataBarMargin = dataBarMargin;
 
 						return {
-							type: 'group',
-							children: [
-								{
-									type: 'rect',
-									style: {
-										fill: 'red'
-									},
-									shape: {
-										x: coverBarX + (index * (dataBarWidht + dataBarMargin)),
-										y: api.coord([0, value])[1],
-										width: dataBarWidht,
-										height: Math.abs(api.coord([0, value])[1] - originY)
-									}
-								},
-								{
-									type: 'text',
-									x: coverBarX + 
-									(dataBarWidht / 2) +
-									(index * (dataBarWidht + dataBarMargin)) -
-									w,
-									y: api.coord([0, value])[1] - (h * 3),
-									style: {
-										text: value,
-										fill: config.value?.series?.fontOptions?.color,
-										fontSize: chartsSrv.sizeConverter(
-											config.value?.series?.fontOptions?.size
-										),
-										fontFamily: config.value?.series?.fontOptions?.family,
-									}
-								}
-							]
-						};
-					});
-
-					return {
-						type: 'group',
-						children: [
-							{
-								type: 'rect',
-								style: {
-									fill: 'rgba(128,128,128,0.3)'
-								},
-								shape: {
-									x: coverBarX,
-									y: coverBarY,
-									width: coverBarWidth,
-									height: coverBarHeight
-								}
+							type: 'rect',
+							style: {
+								fill: 'rgba(128, 128, 128, 0.3)',
 							},
-							...itemList
-						]
-					}
-				}
-			},
+							shape: {
+								x: coverBarX,
+								y: coverBarY,
+								width: coverBarWidth,
+								height: coverBarHeight
+							}
+						};
+					},
+				},
+				...(createSeries() ?? []) as any[],
+			]
 		};
 	};
-
-	const useList = [
-		GridComponent,
-		DatasetComponent,
-		CustomChart,
-		SVGRenderer,
-	];
 
 	watchEffect(() => {
 		config.value = props.config;

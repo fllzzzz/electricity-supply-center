@@ -5,31 +5,45 @@
 			flex-flow: row nowrap;
 			justify-content: flex-start;
 			align-items: center;
+			span {
+				line-height: 1;
+			}
 			#main-icon {
-				width: 74px;
-				height: 74px;
+				width: 48px;
+				height: 48px;
 				object-fit: fill;
 			}
+			#text {
+				margin-top: vw(5);
+				height: vw(24);
+				font-size: vw(24);
+				font-family: Source Han Sans CN;
+				font-weight: 400;
+				color: #FFFFFF;
+				margin-left: vw(21);
+				margin-right: vw(25);
+			}
 			.box {
-				align-self: flex-end;
-				margin-left: 19px;
-				margin-bottom: 15px;
 				display: flex;
 				flex-flow: row nowrap;
 				justify-content: flex-start;
 				align-items: center;
+				margin-right: vw(32);
+				&:last-child {
+					margin-right: unset;
+				}
 				span {
 					&#value {
-						font-size: 32px;
+						font-size: vw(32);
 						font-family: DINPro;
 						font-weight: 400;
 						color: #51F8DE;
 						line-height: 1;
-						margin-right: 8px;
+						margin-right: vw(8);
 					}
 					&#utils {
-						margin-top: 6px;
-						font-size: 24px;
+						margin-top: vw(6);
+						font-size: vw(24);
 						font-family: Source Han Sans CN;
 						font-weight: 400;
 						color: #FFFFFF;
@@ -46,6 +60,7 @@
 	<div class="header-weather">
 		<div class="wrapper">
 			<img id="main-icon" :src="config.image">
+			<span id="text">{{ config.text }}</span>
 			<template
 				v-for="(item, index) in config.itemInfoList"
 				:key="index"
@@ -76,8 +91,9 @@
 	};
 
 	type Config = {
-		image :string;
-		itemInfoList :ItemInfo[];
+		image? :string;
+		text? :string;
+		itemInfoList? :ItemInfo[];
 	};
 
 	const config = reactive<Config>({
@@ -119,10 +135,11 @@
 		getWeather().then(result => result && Object.entries(result).forEach(row => {
 			if(row[0] === 'description') {
 				config.image = imageMap.get(row[1] as string) ?? '';
+				config.text = row[1] as  string;
 				return;
 			}
 
-			config.itemInfoList.push({
+			config.itemInfoList?.push({
 				name: (nameMap.get(row[0]) ?? [])[0] ?? '',
 				unit: (nameMap.get(row[0]) ?? [])[1] ?? '',
 				value: row[1] as number ?? 0,
