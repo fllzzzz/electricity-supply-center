@@ -1,90 +1,53 @@
 <style lang="scss" scoped>
-	@font-face {
-		font-family: DIN;
-		src: url('@fonts/DIN-Regular.otf');
-	}
-
-	.container {
-		width: vw(583);
-		height: vw(365);
-		border: 1px solid red;
+	#main {
+		width: 50vw;
+		height: 50vh;
 	}
 </style>
 
 <template>
-	<div class="container">
-		<ChartsBarCoverGroup
-			:config="config"
-		></ChartsBarCoverGroup>
+	<div id="main">
 	</div>
 </template>
 
 <script setup lang="ts">
 	import type {
-		Config as BarCoverGroup
-	} from '@/components/ChartsBarCoverGroup.vue';
+		EChartsOption
+	} from 'echarts';
 
-	import ChartsBarCoverGroup from '@/components/ChartsBarCoverGroup.vue';
+	import * as echarts from 'echarts';
 
 	import {
-		reactive
+		ref,
+		onMounted
 	} from 'vue';
 
-	const config = reactive<BarCoverGroup>({
-		designWidth: 3840,
-		data: [
-			['item1', 10, 20, 30, 40],
-			['item2', 10, 20, 30, 40],
-			['item3', 10, 20, 30, 40],
-			['item4', 10, 20, 30, 40],
-			['item5', 10, 20, 30, 40],
-		],
-		gridOptions: {
-			top: 75,
-			right: 15,
-			left: 10,
-			bottom: 5,
-		},
-		xAxis: {
-			offset: 22,
-			fontOptions: {
-				size: 24,
-				family: 'Source Han Sans CN',
-				color: 'red'
+	const config = ref({
+		data: []
+	});
+
+	onMounted(() => {
+		echarts.init(document.getElementById('main'))
+		.setOption({
+			dataset: {
+				sourceHeader: false,
+				source: config.value.data
 			},
-			lineOptions: {
-				show: true,
-				color: '#CCCCCC'
+			xAxis: {type: 'category'},
+			yAxis: {type: 'value'},
+			series: {
+				type: 'custom',
+				renderItem: (params, api) => {
+
+
+					return {
+						type: 'group',
+						children: [
+							
+						]
+					}
+				}
 			}
-		},
-		yAxis: {
-			offset: 20,
-			max: 10,
-			name: 'kW·h',
-			nameOptions: {
-				fontOptions: {
-					size: 20,
-					family: 'Source Han Sans CN',
-					color: 'red'
-				},
-				padding: [0, 0, 20, 0]
-			},
-			fontOptions: {
-				size: 24,
-				family: 'DIN',
-				color: 'red'
-			},
-			lineOptions: {
-				show: true,
-				color: '#CCCCCC'
-			}
-		},
-		series: {
-			fontOptions: {
-				size: 20,
-				family: 'DIN',
-				color: 'red' /* #FFFFFF; */
-			}
-		}
+		} as EChartsOption)
 	});
 </script>

@@ -86,6 +86,29 @@ export type SerieOptions = {
 	fontOptions? :FontOptions;
 	lineOptions? :StateOptions & LineStyle;
 	symbolOptions? :SymbolOptions;
+	width? :number;
+};
+
+type LegendData = {
+	name? :string;
+	color? :Color;
+	colorGroup? :Color[];
+};
+
+export type LegendOptions = {
+	data? :LegendData[];
+	fontOptions? :FontOptions;
+	grid? :GridOptions;
+	gap? :number;
+};
+
+export type TooltipOptions = {
+	fontOptions? :FontOptions;
+	fill? :Color;
+	padding? :[number, number, number, number];
+	data? :Map<string, string[]>;
+	borderWidth? :number;
+	borderColor? :Color;
 };
 
 export type ChartsOptions<T extends unknown[]> = {
@@ -93,7 +116,10 @@ export type ChartsOptions<T extends unknown[]> = {
 	data? :T
 	xAxis? :AxisOptions;
 	yAxis? :AxisOptions;
+	yAxisGroup? :AxisOptions[];
 	series? :SerieOptions;
 	gridOptions? :GridOptions;
+	legendOptions? :LegendOptions;
+	tooltipOptions?	:TooltipOptions;
 };
 	

@@ -126,7 +126,7 @@
 	.map((_, yAxisValueIndex) => {
 		_legendData.push(`L${yAxisValueIndex + 1}`);
 		return {
-			name: `L${yAxisValueIndex + 1}`,
+			name: (props.config.legendOptions?.data ?? [])[yAxisValueIndex].name,
 			type: 'custom',
 			encode: {
 				x: 0,
@@ -134,6 +134,9 @@
 			},
 			renderItem: (params: any, api: any) => {
 				if (!canvasCtx) throw new Error('@echarts => canvas context is not available');
+
+				canvasCtx.textAlign = 'center';
+				canvasCtx.textBaseline = 'middle';
 
 				canvasCtx.font =
 					`
@@ -175,7 +178,7 @@
 						{
 							type: 'rect',
 							style: {
-								fill: 'red'
+								fill: (props.config.legendOptions?.data ?? [])[yAxisValueIndex].color
 							},
 							shape: {
 								x: (
@@ -193,7 +196,8 @@
 								(
 									(points[0] - (_requireDistance / 2)) +
 									(yAxisValueIndex * (_dataBarWidht + _dataBarMargin))
-								) - w
+								) - 
+								(w - (w * 0.75))
 							),
 							y: points[1] - (h * 2),
 							style: {
@@ -268,7 +272,30 @@
 				source: config.value?.data
 			},
 			legend: {
-				data: _legendData
+				align:"right",
+				itemGap: chartsSrv.sizeConverter(
+					config.value?.legendOptions?.gap
+				),
+				data: props.config.legendOptions?.data?.map(data => {
+					return {
+						name: data.name,
+						itemStyle: {
+							color: data.color
+						}
+					}
+				}),
+				top: chartsSrv.sizeConverter(
+					config.value?.legendOptions?.grid?.top
+				),
+				right: chartsSrv.sizeConverter(
+					config.value?.legendOptions?.grid?.right
+				),
+				bottom: chartsSrv.sizeConverter(
+					config.value?.legendOptions?.grid?.bottom
+				),
+				left: chartsSrv.sizeConverter(
+					config.value?.legendOptions?.grid?.left
+				),
 			},
 			grid: {
 				containLabel: true,
@@ -414,7 +441,7 @@
 						return {
 							type: 'rect',
 							style: {
-								fill: 'rgba(128, 128, 128, 0.3)',
+								fill: 'rgba(255, 255, 255, 0.05)',
 							},
 							shape: {
 								x: coverBarX,
