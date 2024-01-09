@@ -1,53 +1,33 @@
 <style lang="scss" scoped>
 	#main {
-		width: 50vw;
-		height: 50vh;
+		width: vw(612);
+		height: vw(52);
+		background-color: rgba(2, 29, 32, 1);
 	}
 </style>
 
 <template>
 	<div id="main">
+		<CardDataSwitch
+			:config="dataSwitch"
+			:default-active="0"
+		></CardDataSwitch>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import type {
-		EChartsOption
-	} from 'echarts';
+	import {
+		Config as DataSwitch
+	} from '@/components/CardDataSwitch.vue';
 
-	import * as echarts from 'echarts';
+	import CardDataSwitch from '@/components/CardDataSwitch.vue';
 
 	import {
-		ref,
-		onMounted
+		reactive
 	} from 'vue';
 
-	const config = ref({
-		data: []
-	});
-
-	onMounted(() => {
-		echarts.init(document.getElementById('main'))
-		.setOption({
-			dataset: {
-				sourceHeader: false,
-				source: config.value.data
-			},
-			xAxis: {type: 'category'},
-			yAxis: {type: 'value'},
-			series: {
-				type: 'custom',
-				renderItem: (params, api) => {
-
-
-					return {
-						type: 'group',
-						children: [
-							
-						]
-					}
-				}
-			}
-		} as EChartsOption)
+	const dataSwitch = reactive<DataSwitch>({
+		name: '统计',
+		optionList: ['日', '月', '年']
 	});
 </script>

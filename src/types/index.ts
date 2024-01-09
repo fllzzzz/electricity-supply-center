@@ -87,6 +87,7 @@ export type SerieOptions = {
 	lineOptions? :StateOptions & LineStyle;
 	symbolOptions? :SymbolOptions;
 	width? :number;
+	height? :number;
 };
 
 type LegendData = {
@@ -121,5 +122,6 @@ export type ChartsOptions<T extends unknown[]> = {
 	gridOptions? :GridOptions;
 	legendOptions? :LegendOptions;
 	tooltipOptions?	:TooltipOptions;
+	colorMap? :Map<string, Color>;
 };
 	
