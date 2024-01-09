@@ -104,13 +104,13 @@
 			},
 		],
 		photovoltaic: [
-			{
+/* 			{
 				position: [32, 192],
 				size: [686, 730],
 				instance: defineAsyncComponent(
 					() => import('@/components/PhotovoltaicElectricalEnergy.vue')
 				)
-			},
+			}, */
 			{
 				position: [32, 954],
 				size: [686, 428],
