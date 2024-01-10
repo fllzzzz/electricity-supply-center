@@ -224,8 +224,8 @@
 						Math.abs(mst.actualBoundingBoxLeft) +
 						Math.abs(mst.actualBoundingBoxRight),
 
-						Math.abs(mst.actualBoundingBoxAscent) +
-						Math.abs(mst.actualBoundingBoxDescent)
+						Math.abs(mst.fontBoundingBoxAscent) +
+						Math.abs(mst.fontBoundingBoxDescent)
 					];
 
 					const barHeaderInfo = {

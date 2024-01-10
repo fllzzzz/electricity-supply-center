@@ -218,8 +218,8 @@
 						Math.abs(mst.actualBoundingBoxLeft) +
 						Math.abs(mst.actualBoundingBoxRight),
 
-						Math.abs(mst.actualBoundingBoxAscent) +
-						Math.abs(mst.actualBoundingBoxDescent)
+						Math.abs(mst.fontBoundingBoxAscent) +
+						Math.abs(mst.fontBoundingBoxDescent)
 					];
 
 					return {
@@ -254,7 +254,7 @@
 							},
 							{
 								type: 'text',
-								x: points[0] - (w / 1.5),
+								x: points[0] - (w * 1.5),
 								y: points[1] - (h * 2.5),
 								style: {
 									text: `${values[1]}`,

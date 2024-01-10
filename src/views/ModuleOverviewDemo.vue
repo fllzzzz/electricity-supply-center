@@ -72,7 +72,7 @@
 			size :[number, number],
 			instance :unknown
 		}[]
-	}= {
+	} = {
 		default: [
 			{
 				position: [32, 197],
@@ -104,32 +104,40 @@
 			},
 		],
 		photovoltaic: [
-/* 			{
+			{
 				position: [32, 192],
 				size: [686, 730],
 				instance: defineAsyncComponent(
-					() => import('@/components/PhotovoltaicElectricalEnergy.vue')
+					() => import('@/components/PhotovoltaicGeneratingCapacity.vue')
 				)
-			}, */
+			},
 			{
 				position: [32, 954],
 				size: [686, 428],
-				instance: require<string>('@images/单日电量.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/EarningsOverview.vue')
+				)
 			},
 			{
 				position: [32, 1412],
 				size: [686, 532],
-				instance: require<string>('@images/光照强度.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/RealTimePowerAndIrradiance.vue')
+				)
 			},
 			{
 				position: [3122, 192],
 				size: [686, 715],
-				instance: require<string>('@images/上网统计.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/InternetAccessStatistics.vue')
+				)
 			},
 			{
 				position: [3122, 945],
 				size: [686, 751],
-				instance: require<string>('@images/收益数据.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/EnergyConservation.vue')
+				)
 			},
 			{
 				position: [3122, 1728],
@@ -148,7 +156,9 @@
 			{
 				position: [32, 652],
 				size: [686, 730],
-				instance: require<string>('@images/电池电量百分比.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/ImpulseDischargeStatistics.vue')
+				)
 			},
 			{
 				position: [32, 1414],
@@ -184,8 +194,10 @@
 			},
 			{
 				position: [3122, 191],
-				size: [686, 340],
-				instance: require<string>('@images/充电时长.png')
+				size: [686, 526],
+				instance: defineAsyncComponent(
+					() => import('@/components/ChargingTime.vue')
+				)
 			},
 			{
 				position: [3122, 563],
@@ -212,7 +224,9 @@
 			{
 				position: [32, 1406],
 				size: [686, 428],
-				instance: require<string>('@images/光伏单日发电量.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/EnergyConservation.vue')
+				)
 			},
 			{
 				position: [3122, 192],
@@ -222,12 +236,16 @@
 			{
 				position: [3122, 861],
 				size: [686, 547],
-				instance: require<string>('@images/灌溉用水量.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/GreenhousePhotovoltaicElectricityStatistics.vue')
+				)
 			},
 			{
 				position: [3122, 1440],
 				size: [686, 504],
-				instance: require<string>('@images/智慧农业桩铭牌.png')
+				instance: defineAsyncComponent(
+					() => import('@/components/AgriculturalLoad.vue')
+				)
 			},
 		],
 	}

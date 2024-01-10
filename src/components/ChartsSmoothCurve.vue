@@ -112,8 +112,12 @@
 				data: props.config.legendOptions?.data?.map(data => {
 					return {
 						name: data.name,
+						width: 5,
 						itemStyle: {
-							color: data.color
+							color: data.color,
+						},
+						lineStyle: {
+							width: 10
 						}
 					}
 				}),
@@ -133,6 +137,7 @@
 			tooltip: {
 				show: true,
 				trigger: 'axis',
+				axisPointer: {type: 'none'},
 				borderColor: config.value?.tooltipOptions?.borderColor as string,
 				borderWidth: chartsSrv.sizeConverter(
 					config.value?.tooltipOptions?.borderWidth
@@ -226,6 +231,7 @@
 						type: 'value',
 						name: config.name,
 						nameTextStyle: {
+							align: 'center',
 							color: config.nameOptions?.fontOptions?.color,
 							fontFamily: config.nameOptions?.fontOptions?.family,
 							fontSize: chartsSrv.sizeConverter(config.nameOptions?.fontOptions?.size),
@@ -330,8 +336,6 @@
 					}
 				})
 		};
-
-		console.log('@demo',options.value.series, config.value?.data);
 	};
 
 	watchEffect(() => {

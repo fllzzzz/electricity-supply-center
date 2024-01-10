@@ -168,8 +168,8 @@
 						Math.abs(mst.actualBoundingBoxLeft) +
 						Math.abs(mst.actualBoundingBoxRight),
 
-						Math.abs(mst.actualBoundingBoxAscent) +
-						Math.abs(mst.actualBoundingBoxDescent)
+						Math.abs(mst.fontBoundingBoxAscent) +
+						Math.abs(mst.fontBoundingBoxDescent)
 					];
 
 				return {
@@ -199,7 +199,7 @@
 								) - 
 								(w - (w * 0.75))
 							),
-							y: points[1] - (h * 2),
+							y: points[1] - (h),
 							style: {
 								fill: config.value?.series?.fontOptions?.color,
 								text: values[1],
@@ -273,9 +273,19 @@
 			},
 			legend: {
 				align:"right",
+				icon: 'rect',
+				itemWidth: chartsSrv.sizeConverter(18),
+				itemHeight: chartsSrv.sizeConverter(18),
 				itemGap: chartsSrv.sizeConverter(
 					config.value?.legendOptions?.gap
 				),
+				textStyle: {
+					fontSize: chartsSrv.sizeConverter(
+						props.config.legendOptions?.fontOptions?.size
+					),
+					fontFamily: props.config.legendOptions?.fontOptions?.family,
+					color: props.config.legendOptions?.fontOptions?.color
+				},
 				data: props.config.legendOptions?.data?.map(data => {
 					return {
 						name: data.name,

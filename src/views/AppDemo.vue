@@ -1,17 +1,16 @@
 <style lang="scss" scoped>
 	#main {
 		width: vw(684);
-		height: vw(428);
+		height: vw(477);
 	}
 </style>
 
 <template>
 	<div id="main">
-		<EarningsOverview>
-		</EarningsOverview>
+		<AgriculturalLoad></AgriculturalLoad>
 	</div>
 </template>
 
 <script setup lang="ts">
-import EarningsOverview from '@/components/EarningsOverview.vue';
+	import AgriculturalLoad from '@/components/AgriculturalLoad.vue';
 </script>

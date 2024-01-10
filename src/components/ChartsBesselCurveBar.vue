@@ -165,8 +165,21 @@
 					fontSize: chartsSrv.sizeConverter(config.value?.yAxis?.nameOptions?.fontOptions?.size),
 					fontFamily: config.value?.yAxis?.nameOptions?.fontOptions?.family,
 					lineHeight: config.value?.yAxis?.nameOptions?.fontOptions?.lineHeight,
-					verticalAlign: 'bottom',
-					align: 'left'
+					padding: config.value?.yAxis?.nameOptions?.padding ? 
+					[
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[0]
+						)!,
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[1]
+						)!,
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[2]
+						)!,
+						chartsSrv.sizeConverter(
+							config.value.yAxis.nameOptions.padding[3]
+						)!,
+					] : undefined,
 				},
 				max(extent) {
 					return extent.max + 10;
@@ -277,8 +290,8 @@
 									Math.abs(mst.actualBoundingBoxLeft) +
 									Math.abs(mst.actualBoundingBoxRight),
 
-									Math.abs(mst.actualBoundingBoxAscent) +
-									Math.abs(mst.actualBoundingBoxDescent)
+									Math.abs(mst.fontBoundingBoxAscent) +
+									Math.abs(mst.fontBoundingBoxDescent)
 							];
 							
 							[
@@ -287,8 +300,8 @@
 								textData.text,
 								textData.options.invisible
 							] = [
-								points[0] - (w - (w * 0.4)),
-								points[1] - (h + (h * 0.4)),
+								points[0] - (w * 1.5),
+								points[1] - (h * 2.5),
 								`${values[1]}`,
 								false
 							];

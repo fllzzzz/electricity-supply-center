@@ -4,7 +4,7 @@
 		src: url('@fonts/DIN-Light.otf');
 	}
 
-	.photovoltaic-generating-capacity {
+	.internet-access-statistics {
 		width: 100%;
 		height: 100%;
 		padding: vw(18) 0 0 vw(40);
@@ -53,7 +53,6 @@
 					margin-left: vw(19);
 					margin-right: vw(22);
 					span {
-						
 						height: vw(72);
 						font-size: vw(72);
 						font-family: DINPro;
@@ -101,19 +100,19 @@
 
 <template>
 	<Card
-		id="photovoltaic-generating-capacity"
+		id="internet-access-statistics"
 		:config="{
-			title: '光伏发电量'
+			title: '上网统计'
 		}"
 	>
-		<div class="photovoltaic-generating-capacity">
-			<div class="photovoltaic-generating-capacity__wrapper">
-				<div class="photovoltaic-generating-capacity__wrapper__total-value">
+		<div class="internet-access-statistics">
+			<div class="internet-access-statistics__wrapper">
+				<div class="internet-access-statistics__wrapper__total-value">
 					<div class="block">
 						<img src="@images/发电总量.png">
 					</div>
 					<div class="block">
-						<span>累计电总量</span>
+						<span>上网总电量</span>
 					</div>
 					<div class="block">
 						<span>2813.78</span>
@@ -122,7 +121,7 @@
 						<span>kW·h</span>
 					</div>
 				</div>
-				<div class="photovoltaic-generating-capacity__wrapper__capacit">
+				<div class="internet-access-statistics__wrapper__capacit">
 					<div class="block">
 						<CardDataSwitch
 							:default-active="1"
@@ -130,9 +129,9 @@
 						></CardDataSwitch>
 					</div>
 					<div class="block">
-						<ChartsBarDoubeCol
-							:config="barDoubeColConfig"
-						></ChartsBarDoubeCol>
+						<BarDoubeRow
+							:config="barDoubeRowConfig"
+						></BarDoubeRow>
 					</div>
 				</div>
 			</div>
@@ -142,14 +141,14 @@
 
 <script setup lang="ts">
 	import type {
-		Config as ChartsBarDoubeColType
-	} from '@/components/ChartsBarDoubeCol.vue';
+		Config as BarDoubeRowType
+	} from '@/components/ChartsBarDoubeRow.vue';
 
 	import type {
 		Config as DataSwitchType
 	} from './CardDataSwitch.vue';
 
-	import ChartsBarDoubeCol from '@/components/ChartsBarDoubeCol.vue';
+	import BarDoubeRow from '@/components/ChartsBarDoubeRow.vue';
 	import CardDataSwitch from '@/components/CardDataSwitch.vue';
 	import Card from '@/components/Card.vue';
 
@@ -158,14 +157,14 @@
 	} from 'vue';
 
 	const dataSwitchConfig = reactive<DataSwitchType>({
-		name: '发电量统计',
+		name: '上网统计',
 		optionList: [
 			'日',
 			'月',
 		]
 	});
 
-	const barDoubeColConfig = reactive<ChartsBarDoubeColType>({
+	const barDoubeRowConfig = reactive<BarDoubeRowType>({
 		designWidth: 3840,
 		data: [
 			['item1', 10],
@@ -173,26 +172,26 @@
 			['item3', 30],
 			['item4', 40],
 			['item5', 50],
-		],
+		].reverse(),
 		colorMap: new Map<
 			string,
-			Required<ChartsBarDoubeColType>['colorMap'] extends
+			Required<BarDoubeRowType>['colorMap'] extends
 				Map<string, infer P>
 				? P
 				: never
 		>([
-			['barHeader', 'rgba(255, 153, 0, 0.95)'],
+			['barHeader', '#FFFFFF'],
 			['barBody', {
 				type: 'linear',
-				x: 0, y: 0, x2: 0, y2: 1,
+				x: 1, y: 0, x2: 0, y2: 0,
 				colorStops: [
 					{
 						offset: 0,
-						color: 'rgba(255, 218, 163, 1)'
+						color: 'rgba(0, 255, 255, 1)'
 					},
 					{
 						offset: 1,
-						color: 'rgba(255, 218, 163, 0.3)'
+						color: 'rgba(0, 255, 255, 0.3)'
 					}
 				]
 			}]
@@ -200,13 +199,12 @@
 		gridOptions: {
 			top: 75,
 			left: 15,
-			right: 10,
+			right: 25,
 			bottom: 10
 		},
 		xAxis: {
 			offset: 22,
 			lineOptions: {
-				show: true,
 				color: '#CCCCCC',
 				width: 2,
 			},
@@ -218,15 +216,14 @@
 		},
 		yAxis: {
 			offset: 20,
-			max: 20,
-			name: '单位/kW·h',
+			name: '单位：kW·h',
 			nameOptions: {
 				fontOptions: {
 					size: 24,
 					family: 'Source Han Sans CN',
 					color: '#FFFFFF'
 				},
-				padding: [0, 0, 15, 0]
+				padding: [0, 70, 0, 0]
 			},
 			lineOptions: {
 				show: true,
@@ -240,7 +237,7 @@
 			}
 		},
 		series: {
-			width: 10,
+			width: 6,
 			fontOptions: {
 				size: 28,
 				family: 'DIN',

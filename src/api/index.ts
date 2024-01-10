@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-type Result<T> = {
+interface Result<T> {
 	Status? :boolean;
 	Code? :number;
 	message? :string;
 	data? :T
 };
 
-type Wrather = {
+interface Wrather {
 	description :string;
 	temp :number;
 	humidity :number;
@@ -39,6 +39,6 @@ export const getWeather = () => $default<Result<Wrather>>({
 		];
 		
 		return Object.fromEntries(Object.entries(data).filter(
-			row => keys.includes(row[0]) ? true : false
+			row => keys.includes(row[0])
 		)) as Wrather;
 	})

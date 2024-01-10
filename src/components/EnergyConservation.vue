@@ -4,10 +4,10 @@
 		src: url('@fonts/DIN-Light.otf');
 	}
 
-	.photovoltaic-generating-capacity {
+	.energy-conservation {
 		width: 100%;
 		height: 100%;
-		padding: vw(18) 0 0 vw(40);
+		padding: vw(18) 0 0 vw(32);
 
 		&__wrapper {
 			width: 100%;
@@ -32,7 +32,7 @@
 				&:nth-child(1) {
 					width: vw(70);
 					height: vw(70);
-					margin-right: vw(17);
+					margin-right: vw(8);
 					img {
 						width: 100%;
 						height: 100%;
@@ -41,7 +41,6 @@
 				}
 				&:nth-child(2) {
 					span {
-						width: vw(163);
 						height: vw(32);
 						font-size: vw(32);
 						font-family: Source Han Sans CN;
@@ -53,7 +52,6 @@
 					margin-left: vw(19);
 					margin-right: vw(22);
 					span {
-						
 						height: vw(72);
 						font-size: vw(72);
 						font-family: DINPro;
@@ -63,7 +61,6 @@
 				}
 				&:nth-child(4) {
 					span {
-						width: vw(73);
 						height: vw(28);
 						font-size: vw(28);
 						font-family: Source Han Sans CN;
@@ -101,28 +98,28 @@
 
 <template>
 	<Card
-		id="photovoltaic-generating-capacity"
+		id="energy-conservation"
 		:config="{
-			title: '光伏发电量'
+			title: '节能减排'
 		}"
 	>
-		<div class="photovoltaic-generating-capacity">
-			<div class="photovoltaic-generating-capacity__wrapper">
-				<div class="photovoltaic-generating-capacity__wrapper__total-value">
+		<div class="energy-conservation">
+			<div class="energy-conservation__wrapper">
+				<div class="energy-conservation__wrapper__total-value">
 					<div class="block">
 						<img src="@images/发电总量.png">
 					</div>
 					<div class="block">
-						<span>累计电总量</span>
+						<span>累计减碳排量</span>
 					</div>
 					<div class="block">
 						<span>2813.78</span>
 					</div>
 					<div class="block">
-						<span>kW·h</span>
+						<span>t</span>
 					</div>
 				</div>
-				<div class="photovoltaic-generating-capacity__wrapper__capacit">
+				<div class="energy-conservation__wrapper__capacit">
 					<div class="block">
 						<CardDataSwitch
 							:default-active="1"
@@ -130,9 +127,9 @@
 						></CardDataSwitch>
 					</div>
 					<div class="block">
-						<ChartsBarDoubeCol
-							:config="barDoubeColConfig"
-						></ChartsBarDoubeCol>
+						<BesselCurveBar
+							:config="besselCurveBarConfig"
+						></BesselCurveBar>
 					</div>
 				</div>
 			</div>
@@ -142,14 +139,16 @@
 
 <script setup lang="ts">
 	import type {
-		Config as ChartsBarDoubeColType
-	} from '@/components/ChartsBarDoubeCol.vue';
+		Config as BesselCurveBarType
+	} from '@/components/ChartsBesselCurveBar.vue';
 
 	import type {
 		Config as DataSwitchType
 	} from './CardDataSwitch.vue';
 
-	import ChartsBarDoubeCol from '@/components/ChartsBarDoubeCol.vue';
+	import * as echarts from 'echarts';
+	import BesselCurveBar 
+	from '@/components/ChartsBesselCurveBar.vue';
 	import CardDataSwitch from '@/components/CardDataSwitch.vue';
 	import Card from '@/components/Card.vue';
 
@@ -158,94 +157,73 @@
 	} from 'vue';
 
 	const dataSwitchConfig = reactive<DataSwitchType>({
-		name: '发电量统计',
+		name: '减碳排量统计',
 		optionList: [
 			'日',
 			'月',
 		]
 	});
 
-	const barDoubeColConfig = reactive<ChartsBarDoubeColType>({
+	const besselCurveBarConfig = reactive<BesselCurveBarType>({
 		designWidth: 3840,
 		data: [
-			['item1', 10],
-			['item2', 20],
-			['item3', 30],
-			['item4', 40],
-			['item5', 50],
-		],
-		colorMap: new Map<
-			string,
-			Required<ChartsBarDoubeColType>['colorMap'] extends
-				Map<string, infer P>
-				? P
-				: never
-		>([
-			['barHeader', 'rgba(255, 153, 0, 0.95)'],
-			['barBody', {
-				type: 'linear',
-				x: 0, y: 0, x2: 0, y2: 1,
-				colorStops: [
-					{
-						offset: 0,
-						color: 'rgba(255, 218, 163, 1)'
-					},
-					{
-						offset: 1,
-						color: 'rgba(255, 218, 163, 0.3)'
-					}
-				]
-			}]
-		]),
-		gridOptions: {
-			top: 75,
-			left: 15,
-			right: 10,
-			bottom: 10
-		},
+			['0时', 50],
+			['2时', 10],
+			['4时',	20],
+			['6时',	30],
+			['8时', 40],
+			['10时', 60],
+			['12时', 60],
+		] as [string, number][],
 		xAxis: {
-			offset: 22,
-			lineOptions: {
-				show: true,
-				color: '#CCCCCC',
-				width: 2,
-			},
 			fontOptions: {
 				size: 24,
 				family: 'Source Han Sans CN',
-				color: '#FFFFFF'
+				color: '#FFFFFF',
+				weight: 'normal'
 			}
 		},
 		yAxis: {
-			offset: 20,
-			max: 20,
-			name: '单位/kW·h',
+			name: 't',
 			nameOptions: {
+				padding: [0, 30, 10, 0],
 				fontOptions: {
-					size: 24,
+					size: 28,
 					family: 'Source Han Sans CN',
-					color: '#FFFFFF'
-				},
-				padding: [0, 0, 15, 0]
-			},
-			lineOptions: {
-				show: true,
-				color: '#CCCCCC',
-				width: 2,
+					color: '#FFFFFF',
+					weight: 'normal',
+					lineHeight: 1,
+				}
 			},
 			fontOptions: {
 				size: 24,
 				family: 'DIN',
-				color: '#FFFFFF'
+				color: '#FFFFFF',
+				weight: 'normal'
 			}
 		},
 		series: {
-			width: 10,
+			stroke: 'rgba(0, 255, 114, 1)',
+			fill: (() => {
+				return new echarts.graphic.LinearGradient(
+					0, 0, 0, 1, [
+						{
+							offset: 0,
+							color: 'rgba(0, 255, 114, 1)'
+						},
+						{
+							offset: 1,
+							color: 'rgba(0, 255, 114, 0.3)'
+						},
+					]
+				);
+			})(),
 			fontOptions: {
-				size: 28,
+				size: 32,
 				family: 'DIN',
 				color: '#FFFFFF',
-			}
+				weight: 'bolder'
+			},
 		}
 	});
 </script>
