@@ -69,9 +69,7 @@ const ringConfig = reactive<RingType>({
 	designWidth: 3840,
 	data: [
 		['可放电量', 78],
-		['可充', 0.9],
 		['可充电量', 40],
-		['可充', 0.9],
 	],
 	colorMap: new Map<
 		string,
@@ -81,7 +79,7 @@ const ringConfig = reactive<RingType>({
 		: never
 	>([
 		['可放电量', '#00EAFF'],
-		['可充电量', '#F8B551']
+		['可充电量', '#F8B551'],
 	])
 });
 </script>

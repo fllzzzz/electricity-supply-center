@@ -2,7 +2,6 @@
 	.charts-ring {
 		width: 100%;
 		height: 100%;
-		position: relative;
 		background-size: 100% 100%;
 		background-image: url('@images/ring-bkg.png');
 		position: relative;
@@ -66,6 +65,7 @@
 		PropType
 	} from 'vue';
 
+	import debdounce from '@/utils/debounce';
 	import ChartsService from '@/services/ChartsService';
 	import Echarts from '@/components/Echarts.vue';
 
@@ -84,7 +84,9 @@
 	import {
 		ref,
 		watchEffect,
-		onMounted
+		onMounted,
+		computed,
+		onUnmounted
 	} from 'vue';
 
 	export type Config = ChartsOptions<(string | number)[][]>
@@ -108,6 +110,7 @@
 		}
 	});
 	
+	let observer :ResizeObserver;
 	const element = ref<HTMLElement | undefined>();
 	const options = ref<ECOption>({});
 	const config = ref<Config | undefined>();
@@ -119,12 +122,23 @@
 		PieChart,
 		SVGRenderer
 	];
+	const dataAdapter = computed(() => {
+		const hundredth = (config.value?.data?.map(
+			row => row.slice(1)
+		) as number[][]).reduce(
+			(a, b) => [a[0] + b[0]]
+		)[0] / 100;
 
-	const builder = () => {	
+		return config.value?.data?.map(
+			(row, i) => [row, [`cover${i}`, hundredth]]
+		).reduce((a, b) => a.concat(b));
+	});
+
+	const builder = () => {
 		options.value = {
 			dataset: {
 				sourceHeader: false,
-				source: config.value?.data
+				source: dataAdapter.value
 			},
 			series: {
 				type: 'pie',
@@ -158,7 +172,30 @@
 
 	onMounted(() => {
 		element.value && (el => {
-			el.style.fontSize = `${el.clientWidth / 100}px`;
+			observer = new ResizeObserver(debdounce<
+				((
+					entryList: ResizeObserverEntry[],
+					observer: ResizeObserver
+				) => void)
+			>((entryList, observer) => {
+				for (const entry of entryList) {
+					const { inlineSize: w, blockSize: h } = entry.borderBoxSize[0];
+
+					if (w === 0 && h === 0) {
+						observer.unobserve(entry.target);
+						return;
+					}
+
+					const el = entry.target as HTMLElement;
+					el.style.fontSize = `${el.clientWidth / 100}px`;
+				}
+			}, 20))
+
+			observer.observe(el);
 		})(element.value)
+	});
+
+	onUnmounted(() => {
+		observer.disconnect();
 	});
 </script>

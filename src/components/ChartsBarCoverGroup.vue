@@ -81,12 +81,10 @@
 
 	let maxData :number;
 	let [
-		_legendData,
 		_requireDistance,
 		_dataBarWidht,
 		_dataBarMargin
 	] = [
-		[]  as string[],
 		0, 0, 0
 	];
 	const options = ref<ECOption>({});
@@ -124,7 +122,6 @@
 		row => row.slice(1)
 	).sort((a, b) => a.length > b.length ? -1 : 1)[0]
 	.map((_, yAxisValueIndex) => {
-		_legendData.push(`L${yAxisValueIndex + 1}`);
 		return {
 			name: (props.config.legendOptions?.data ?? [])[yAxisValueIndex].name,
 			type: 'custom',
