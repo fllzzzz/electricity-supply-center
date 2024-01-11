@@ -1,16 +1,16 @@
 <style lang="scss" scoped>
-	#main {
+	.container {
 		width: vw(684);
-		height: vw(477);
+		height: vw(860);
 	}
 </style>
 
 <template>
-	<div id="main">
-		<AgriculturalLoad></AgriculturalLoad>
+	<div class="container">
+		<ShareOfGreenPower3></ShareOfGreenPower3>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import AgriculturalLoad from '@/components/AgriculturalLoad.vue';
+	import ShareOfGreenPower3 from '@/components/ShareOfGreenPower3.vue';
 </script>

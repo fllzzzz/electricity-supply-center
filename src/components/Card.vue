@@ -69,7 +69,7 @@
 				<span>{{ props.config?.title }}</span>
 			</div>
 		</div>
-		<div class="jx-card__item" id="body">
+		<div class="jx-card__item" id="body" ref="elBody">
 			<template
 				v-if="! $props.config?.disableLeftIcon"
 			>
@@ -83,7 +83,9 @@
 
 <script setup lang="ts">
 	import {
-		PropType
+		ref,
+		PropType,
+		onMounted
 	} from 'vue';
 
 	type Config = {
@@ -91,9 +93,21 @@
 		disableLeftIcon? :boolean;
 	};
 
+	const emits = defineEmits<{
+		bodyColor: [value :string]
+	}>();
+
 	const props = defineProps({
 		config: {
 			type: Object as PropType<Config>,
 		}
+	});
+
+	const elBody = ref<HTMLElement | undefined>();
+
+	onMounted(() => {
+		elBody.value && (el => {
+			emits('bodyColor', window.getComputedStyle(el).backgroundColor);
+		})(elBody.value)
 	});
 </script>
