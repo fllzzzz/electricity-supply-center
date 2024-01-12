@@ -99,9 +99,9 @@
 			&::before {
 				content: '';
 				display: inline-block;
-				width: 16px;
-				height: 16px;
-				background: #00EAFF;
+				width: vw(16);
+				height: vw(16);
+				background: var(--color);
 				margin-right: vw(16);
 			}
 			span {
