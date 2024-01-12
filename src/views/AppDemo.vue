@@ -1,7 +1,7 @@
 <style lang="scss" scoped>
 	.container {
 		width: vw(684);
-		height: vw(860);
+		height: vw(962);
 	}
 </style>
 

@@ -85,7 +85,6 @@
 		ref,
 		watchEffect,
 		onMounted,
-		computed,
 		onUnmounted
 	} from 'vue';
 
@@ -100,7 +99,7 @@
 		percent: [percents :{
 			name :string;
 			percent :number;
-		}],
+		}[]],
 	}>();
 
 	const props = defineProps({
@@ -111,6 +110,7 @@
 	});
 	
 	let observer :ResizeObserver;
+	let decorateData :(string | number)[][];
 	const element = ref<HTMLElement | undefined>();
 	const options = ref<ECOption>({});
 	const config = ref<Config | undefined>();
@@ -122,23 +122,12 @@
 		PieChart,
 		SVGRenderer
 	];
-	const dataAdapter = computed(() => {
-		const hundredth = (config.value?.data?.map(
-			row => row.slice(1)
-		) as number[][]).reduce(
-			(a, b) => [a[0] + b[0]]
-		)[0] / 100;
-
-		return config.value?.data?.map(
-			(row, i) => [row, [`cover${i}`, hundredth]]
-		).reduce((a, b) => a.concat(b));
-	});
 
 	const builder = () => {
 		options.value = {
 			dataset: {
 				sourceHeader: false,
-				source: dataAdapter.value
+				source: decorateData
 			},
 			series: {
 				type: 'pie',
@@ -149,12 +138,7 @@
 				itemStyle: {
 					borderWidth: chartsSrv.sizeConverter(5),
 					borderColor: config.value?.series?.stroke,
-					color: params => {
-						emits('percent', {
-							name: (params.data as [string, unknown])[0],
-							percent: params.percent
-						});
-						
+					color: params => {					
 						return props.config.colorMap?.get(
 							(params.data as [string, unknown])[0]
 						) ?? 'rgba(0, 0, 0, 0)';
@@ -166,6 +150,25 @@
 
 	watchEffect(() => {
 		config.value = props.config;
+
+		if (!config.value?.data) return;
+
+		const hundredth = (config.value?.data?.map(
+			row => row.slice(1)
+		) as number[][]).reduce(
+			(a, b) => [a[0] + b[0]]
+		)[0] / 100;
+
+		emits('percent', config.value.data.map(row => {
+			return {
+				name: row[0] as string,
+				percent: (row[1] as number) / hundredth
+			};
+		}))
+
+		decorateData = config.value.data.map(
+			(row, i) => [row, [`cover${i}`, hundredth]]
+		).reduce((a, b) => a.concat(b));
 
 		builder();
 	});
@@ -191,6 +194,7 @@
 				}
 			}, 20))
 
+			el.style.fontSize = `${el.clientWidth / 100}px`;
 			observer.observe(el);
 		})(element.value)
 	});
