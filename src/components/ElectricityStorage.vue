@@ -1,5 +1,5 @@
 <style scoped lang="scss">
-.share-of-green-power-3 {
+.electricity-storage-3 {
 	width: 100%;
 	height: 100%;
 	padding: vw(27) 0 0 vw(48);
@@ -131,12 +131,12 @@
 <template>
 	<Card 
 		:config="{
-			title: '3号楼绿电占比'
+			title: '储能电量'
 		}"
 	>
-		<div class="share-of-green-power-3">
-			<div class="share-of-green-power-3__wrapper">
-				<div class="share-of-green-power-3__wrapper__header">
+		<div class="electricity-storage-3">
+			<div class="electricity-storage-3__wrapper">
+				<div class="electricity-storage-3__wrapper__header">
 					<div v-for="(data, i) in config.headerList" :key="i"
 						class="block"
 						:style="{
@@ -152,8 +152,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="share-of-green-power-3__wrapper__split-line"></div>
-				<div class="share-of-green-power-3__wrapper__ring">
+				<div class="electricity-storage-3__wrapper__split-line"></div>
+				<div class="electricity-storage-3__wrapper__ring">
 					<ChartsRing
 						:config="ringConfig"
 						@percent="p => percentList = p"
@@ -161,7 +161,7 @@
 						<span>电池容量</span>
 					</ChartsRing>
 				</div>
-				<div class="share-of-green-power-3__wrapper__footer">
+				<div class="electricity-storage-3__wrapper__footer">
 					<div v-for="(percents, i) in percentList" :key="i">
 						<div class="block"
 							:style="{

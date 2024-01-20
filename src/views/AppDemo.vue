@@ -1,17 +1,17 @@
 <style lang="scss" scoped>
 	.container {
 		width: vw(684);
-		height: vw(420);
+		height: vw(221);
 	}
 
 </style>
 
 <template>
 	<div class="container">
-		<SoilData></SoilData>
+		<Active></Active>
 	</div>
 </template>
 
 <script setup lang="ts">
-	import SoilData from '@/components/SoilData.vue';
+	import Active from '@/components/ChargingCount.vue';
 </script>

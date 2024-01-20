@@ -2,7 +2,7 @@
 	.alarm-status {
 		width: 100%;
 		height: 100%;
-		padding: vw(26) 0 0 vw(48);
+		padding: vw(26) 0 vw(10) vw(48);
 
 		&__wrapper {
 			width: 100%;
