@@ -194,9 +194,9 @@
 									(points[0] - (_requireDistance / 2)) +
 									(yAxisValueIndex * (_dataBarWidht + _dataBarMargin))
 								) - 
-								(w - (w * 0.75))
+								(w - (w * 0.5))
 							),
-							y: points[1] - (h),
+							y: points[1] - (h * 2),
 							style: {
 								fill: config.value?.series?.fontOptions?.color,
 								text: values[1],

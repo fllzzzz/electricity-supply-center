@@ -127,7 +127,7 @@
 						class="block"
 					>
 						<div class="col">
-							<img src="">
+							<img src="@images/组 1877.png">
 						</div>
 						<div class="col">
 							<div class="row">

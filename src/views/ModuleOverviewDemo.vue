@@ -89,6 +89,13 @@
 				)
 			},
 			{
+				position: [32, 1242],
+				size: [684, 702],
+				instance: defineAsyncComponent(
+					() => import('@/components/RegionalLayout.vue')
+				)
+			},
+			{
 				position: [3122, 198],
 				size: [684, 926],
 				instance: defineAsyncComponent(
@@ -187,30 +194,30 @@
 		chargingPost: [
 			{
 				position: [32, 198],
-				size: [684, 420],
+				size: [684, 1752],
+				instance: defineAsyncComponent(
+					() => import('@/components/ChargingVolumeAtCharging.vue')
+				)
+			},
+			{
+				position: [3122, 198],
+				size: [684, 402],
+				instance: defineAsyncComponent(
+					() => import('@/components/ChargingCount.vue')
+				)
+			},
+			{
+				position: [3122, 626],
+				size: [684, 526],
 				instance: defineAsyncComponent(
 					() => import('@/components/ChargingTime.vue')
 				)
 			},
 			{
-				position: [32, 1562],
-				size: [686, 352],
-				instance: defineAsyncComponent(
-					() => import('@/components/ChargingTime.vue')
-				)
-			},
-			{
-				position: [3122, 191],
-				size: [686, 526],
-				instance: defineAsyncComponent(
-					() => import('@/components/ChargingTime.vue')
-				)
-			},
-			{
-				position: [3122, 563],
+				position: [3122, 1184],
 				size: [686, 760],
 				instance: defineAsyncComponent(
-					() => import('@/components/ChargingTime.vue')
+					() => import('@/components/RevenueFromChargingPiles.vue')
 				)
 			},
 		],

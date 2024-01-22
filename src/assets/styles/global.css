@@ -12,8 +12,14 @@ img {
 
 span {
 	line-height: 1;
+	display: inline-block;
 }
 
 img {
 	-webkit-user-drag: none;
+}
+
+@font-face {
+	font-family: DINPro;
+	src: url('@fonts/DIN-Light.otf');
 }

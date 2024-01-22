@@ -42,7 +42,7 @@
 					font-family: Source Han Sans CN;
 					font-weight: 400;
 					color: #FFFFFF;
-					margin-bottom: vw(3);
+					margin-bottom: vw(8);
 				}
 			}
 			.row:nth-child(2) {
